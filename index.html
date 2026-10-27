@@ -6,6 +6,19 @@
 <title>EDGE · Turbojet Programme</title>
 <meta name="description" content="Turbojet Engine Manufacturing & Localization Project — interactive programme briefing.">
 <meta name="theme-color" content="#04070a">
+<!-- Google Analytics (GA4). Put your Measurement ID here; tracking stays off until it's a real ID. -->
+<script>
+  window.GA_ID = 'G-RPVKXYBGCC';
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+  window.track = function () {};
+  if (/^G-[A-Z0-9]+$/.test(GA_ID) && GA_ID !== 'G-XXXXXXXXXX') {
+    const s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    gtag('js', new Date()); gtag('config', GA_ID);
+    window.track = (name, params) => gtag('event', name, params || {});
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Saira:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -817,6 +830,7 @@ function onScroll() {
   if (i !== current) {
     current = i;
     scramble(crumb, sections[i].dataset.label, 420);
+    track('section_view', { section: sections[i].dataset.label });
     secNum.textContent = String(i + 1).padStart(2, '0');
     railLinks.forEach((a, k) => a.classList.toggle('active', k === i));
   }
@@ -849,6 +863,7 @@ addEventListener('keydown', e => {
   else if (e.key.toLowerCase() === 'f') togglePresent();
 });
 function togglePresent() {
+  track('presentation_mode', { action: document.fullscreenElement ? 'exit' : 'enter' });
   if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
   else document.exitFullscreen?.();
 }
@@ -872,6 +887,7 @@ function setModel(m, instant = false) {
   $$('[data-spec]').forEach(el => instant ? (el.textContent = d[el.dataset.spec]) : scramble(el, d[el.dataset.spec]));
   updateThrottle();
   engine?.setModel(m);
+  if (!instant) track('engine_model_view', { model: d.name });
 }
 $$('#modelSwitch button').forEach(b => b.addEventListener('click', () => setModel(b.dataset.model)));
 const thr = $('#throttle');
@@ -888,6 +904,7 @@ $('#explodeBtn').addEventListener('click', e => {
   explode = !explode;
   e.currentTarget.setAttribute('aria-pressed', explode);
   engine?.setExplode(explode);
+  track('exploded_view', { state: explode ? 'on' : 'off' });
 });
 setModel('nj40', true);
 
@@ -944,6 +961,7 @@ function setPhase(i) {
   tween(KIT.nj120 * (1 - from.red / 100), KIT.nj120 * (1 - P.red / 100), v => $('#rdNj120').textContent = '$' + fmt(Math.round(v)));
   engine?.setPhase(i);
   setCompPhase(i);
+  if (prev >= 0) track('manufacturing_phase_view', { phase: P.n });
 }
 function tween(a, b, fn, dur = 900) {
   if (reduced || a === b) return fn(b);
@@ -988,6 +1006,7 @@ const compView = $('#compView');
     $$('.sview button').forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b); });
     $('#stageSetup').classList.toggle('view-comp', comp);
     engine?.setPaused(comp);
+    track('setup_view_toggle', { view: b.dataset.sview });
   }));
 })();
 // 3D depth: the deck images tilt and float with the pointer
@@ -1039,12 +1058,13 @@ setPhase(0);
     r.addEventListener('pointerenter', () => { tip.querySelector('b').textContent = z.name; tip.querySelector('span').textContent = `${fmt(z.area)} m² · ${PH[z.ph][0]}`; tip.classList.add('on'); });
     r.addEventListener('pointermove', e => { const s = shell.getBoundingClientRect(); tip.style.left = (e.clientX - s.left) + 'px'; tip.style.top = (e.clientY - s.top) + 'px'; });
     r.addEventListener('pointerleave', () => tip.classList.remove('on'));
-    r.addEventListener('click', () => select(z.id));
+    r.addEventListener('click', () => { select(z.id); track('factory_zone_click', { zone: z.name }); });
     r.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); select(z.id); } });
   });
   $$('#phaseFilter .chip').forEach(c => c.addEventListener('click', () => {
     $$('#phaseFilter .chip').forEach(x => x.classList.toggle('active', x === c));
     plan.dataset.filter = c.dataset.f;
+    track('factory_phase_filter', { filter: c.dataset.f });
     plan.classList.toggle('dim', c.dataset.f !== 'all');
     if (c.dataset.f !== 'all') {
       const first = ZONES.filter(z => String(z.ph) === c.dataset.f).sort((a, b) => b.area - a.area)[0];
@@ -1057,12 +1077,14 @@ setPhase(0);
     const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
     e.currentTarget.setAttribute('aria-pressed', on);
     $('#flow').classList.toggle('on', on);
+    track('factory_material_flow', { state: on ? 'on' : 'off' });
     flowLegend.classList.toggle('on', on);
   });
   $('#tiltBtn').addEventListener('click', e => {
     const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
     e.currentTarget.setAttribute('aria-pressed', on);
     plan.classList.toggle('tilt', on);
+    track('factory_3d_view', { state: on ? 'on' : 'off' });
   });
   select('asm');
 })();
