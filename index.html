@@ -289,12 +289,36 @@
 
         <div class="setup-body">
           <div class="setup-stage-wrap">
-            <div class="stage" id="stageSetup">
+            <div class="stage view-comp" id="stageSetup">
               <div class="stage-glow"></div>
               <div class="stage-labels"></div>
               <div class="stage-hud">
                 <span class="c c1"></span><span class="c c2"></span><span class="c c3"></span><span class="c c4"></span>
-                <div class="readout">Exploded assembly<br>Sourcing <b id="roSrc">OEM</b></div>
+                <div class="readout">Engine components<br>Sourcing <b id="roSrc">OEM</b></div>
+              </div>
+              <div class="sview" role="group" aria-label="Engine view">
+                <button class="active" data-sview="comp" aria-pressed="true">Components</button>
+                <button data-sview="3d" aria-pressed="false">3D model</button>
+              </div>
+              <div class="comp-view" id="compView">
+                <div class="comp-sheet">
+                  <div class="comp-img">
+                    <img src="assets/components.jpg" alt="Exploded turbojet engine components">
+                    <svg viewBox="0 0 1002 416" preserveAspectRatio="none" aria-hidden="true">
+                      <defs><mask id="compMask"><rect width="1002" height="416" fill="#fff"/><g id="compHoles"></g></mask></defs>
+                      <rect class="comp-dim" width="1002" height="416" mask="url(#compMask)"/>
+                      <g id="compFrames"></g>
+                      <g id="compGroups"></g>
+                      <g id="compHits"></g>
+                    </svg>
+                    <div class="ctip" id="ctip"><b></b><span></span></div>
+                  </div>
+                </div>
+                <div class="comp-arrow" aria-hidden="true"><i></i><i></i><i></i></div>
+                <div class="comp-engine">
+                  <img src="assets/engine-assembled.jpg" alt="Assembled turbojet engine">
+                  <span id="compEngCap">Assembly + engine test</span>
+                </div>
               </div>
               <div class="loc-legend"><span class="oem"><i></i>OEM supplied</span><span class="loc"><i></i>Locally machined</span></div>
               <div class="comp-badge" id="compBadge">100% OEM components</div>
@@ -458,6 +482,25 @@ const PHASES = [
 ];
 const KIT = { nj40: 8760, nj120: 43625 };
 // Floor-plan zones, in the plan image's 1400 × 604 coordinate space. ph: 1/2/3 per the deck legend; 0 = shared.
+// Engine components on the deck's exploded-parts sheet (assets/components.jpg, 1002 × 416).
+// core = boxed as "Core Machining components" in the deck's Phase 2 panel; elec = electrical / control items.
+const PARTS = [
+  { id: 'casing', name: 'Outer casing', r: [464, 6, 166, 114] },
+  { id: 'front', name: 'Intake housing & inlet cone', r: [0, 124, 162, 150] },
+  { id: 'diffuser', name: 'Diffuser', r: [164, 128, 77, 144] },
+  { id: 'impeller', name: 'Compressor impeller', r: [242, 146, 66, 112] },
+  { id: 'stator', name: 'Stator & fuel vaporizers', r: [310, 138, 136, 130], core: true },
+  { id: 'combustor', name: 'Combustion chamber', r: [446, 150, 107, 112], core: true },
+  { id: 'ngv', name: 'Nozzle guide vanes', r: [553, 136, 76, 136], core: true },
+  { id: 'shroud', name: 'Turbine housing', r: [629, 130, 100, 142] },
+  { id: 'turbine', name: 'Turbine wheel & shaft', r: [729, 154, 116, 98], core: true },
+  { id: 'nozzle', name: 'Exhaust nozzle', r: [846, 130, 156, 144] },
+  { id: 'starter', name: 'Starter motor', r: [36, 290, 214, 98], elec: true },
+  { id: 'valve', name: 'Fuel valve & pump', r: [292, 288, 190, 102], elec: true },
+  { id: 'clamps', name: 'Mounting brackets', r: [518, 284, 204, 110] },
+  { id: 'ecu', name: 'Engine control unit (ECU)', r: [776, 292, 194, 98], elec: true }
+];
+const isLocal = (p, i) => i === 1 ? !!p.core : i === 2 ? !p.elec : false;
 const ZONES = [
   { id: 'cast', name: 'Cast / Forged Blanks Storage', area: 350, ph: 2, r: [70, 35, 158, 263], desc: 'Raw cast and forged blanks staged for machining.' },
   { id: 'alu', name: 'Aluminium Bar / Sheet Storage', area: 350, ph: 2, r: [232, 35, 153, 263], desc: 'Bar and sheet stock storage.' },
@@ -906,12 +949,62 @@ function setPhase(i) {
   tween(KIT.nj40 * (1 - from.red / 100), KIT.nj40 * (1 - P.red / 100), v => $('#rdNj40').textContent = '$' + fmt(Math.round(v)));
   tween(KIT.nj120 * (1 - from.red / 100), KIT.nj120 * (1 - P.red / 100), v => $('#rdNj120').textContent = '$' + fmt(Math.round(v)));
   engine?.setPhase(i);
+  setCompPhase(i);
 }
 function tween(a, b, fn, dur = 900) {
   if (reduced || a === b) return fn(b);
   const s = performance.now();
   const t = (n) => { const k = clamp((n - s) / dur, 0, 1); fn(lerp(a, b, easeOut(k))); if (k < 1) requestAnimationFrame(t); else fn(b); };
   requestAnimationFrame(t);
+}
+/* ---------- deck component sheet ---------- */
+const compView = $('#compView');
+(() => {
+  const ns = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs, parent) => { const el = document.createElementNS(ns, tag); for (const k in attrs) el.setAttribute(k, attrs[k]); parent.appendChild(el); return el; };
+  const box = (r, pad = 4) => ({ x: r[0] - pad, y: r[1] - pad, width: r[2] + pad * 2, height: r[3] + pad * 2 });
+  PARTS.forEach(p => {
+    mk('rect', { ...box(p.r, 2), rx: 6, fill: '#000', class: 'hole', 'data-id': p.id }, $('#compHoles'));
+    mk('rect', { ...box(p.r), rx: 6, class: 'cframe', 'data-id': p.id }, $('#compFrames'));
+    const hit = mk('rect', { ...box(p.r, 0), rx: 6, class: 'chit', 'data-id': p.id }, $('#compHits'));
+    hit.addEventListener('pointerenter', e => showTip(p, e));
+    hit.addEventListener('pointermove', e => showTip(p, e));
+    hit.addEventListener('pointerleave', () => $('#ctip').classList.remove('on'));
+    hit.addEventListener('click', e => showTip(p, e));
+  });
+  // the two highlight frames from the deck's Phase 2 panel
+  [[306, 120, 350, 160, 'Core machining'], [725, 120, 124, 160, 'Turbine']].forEach(([x, y, w, h, t]) => {
+    const g = mk('g', { class: 'cgroup' }, $('#compGroups'));
+    mk('rect', { x, y, width: w, height: h }, g);
+    [[x, y], [x + w, y], [x, y + h], [x + w, y + h]].forEach(([cx, cy]) => mk('circle', { cx, cy, r: 6 }, g));
+    const tw = t.length * 11.5 + 18;
+    mk('rect', { x, y: y - 30, width: tw, height: 26, class: 'lbl' }, g);
+    mk('text', { x: x + 9, y: y - 11 }, g).textContent = t.toUpperCase();
+  });
+  function showTip(p, e) {
+    const tip = $('#ctip'), host = $('.comp-img').getBoundingClientRect();
+    tip.querySelector('b').textContent = p.name;
+    tip.querySelector('span').textContent = isLocal(p, phase) ? 'Locally machined' : (phase === 0 || !p.elec ? 'OEM supplied' : 'Supplied component');
+    tip.style.left = (e.clientX - host.left) + 'px';
+    tip.style.top = (e.clientY - host.top) + 'px';
+    tip.classList.add('on');
+  }
+  $$('.sview button').forEach(b => b.addEventListener('click', () => {
+    const comp = b.dataset.sview === 'comp';
+    $$('.sview button').forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b); });
+    $('#stageSetup').classList.toggle('view-comp', comp);
+    engine?.setPaused(comp);
+  }));
+})();
+function setCompPhase(i) {
+  compView.dataset.phase = i;
+  PARTS.forEach(p => {
+    const on = isLocal(p, i);
+    $(`.hole[data-id="${p.id}"]`).classList.toggle('on', on);
+    $(`.cframe[data-id="${p.id}"]`).classList.toggle('on', i === 2 && on);
+  });
+  $$('.cgroup').forEach(g => g.classList.toggle('on', i === 1));
+  $('#compEngCap').textContent = ['Assembly + engine test', 'Core machining + assembly + test', '100% machining + assembly + test'][i];
 }
 setPhase(0);
 
@@ -1206,7 +1299,7 @@ async function createEngine() {
   let cur = engines.nj40, prev = null;
   cur.root.visible = true;
 
-  const PHASE_LOCAL = [[], ['compressor', 'shaft', 'combustor', 'turbine'], ['spinner', 'intake', 'compressor', 'casing', 'shaft', 'combustor', 'turbine', 'nozzle']];
+  const PHASE_LOCAL = [[], ['shaft', 'combustor', 'turbine'], ['spinner', 'intake', 'compressor', 'casing', 'shaft', 'combustor', 'turbine', 'nozzle']];
   const labelEls = {};
   const labelIds = ['spinner', 'intake', 'compressor', 'casing', 'shaft', 'combustor', 'turbine', 'nozzle'];
   // staggered leader-line heights so neighbouring labels never collide
@@ -1262,7 +1355,7 @@ async function createEngine() {
   let dist = 16;
   function frame() {
     requestAnimationFrame(frame);
-    if (!state.visible || !state.stage) return;
+    if (!state.visible || !state.stage || (state.paused && state.mode === 'setup')) return;
     const dt = Math.min(clock.getDelta(), .05);
     const t = clock.elapsedTime;
 
@@ -1364,13 +1457,15 @@ async function createEngine() {
     setModel: m => setModel(m),
     setThrottle: v => { state.throttle = v; },
     setExplode: v => { state.explode = v ? 1 : 0; },
-    setPhase: i => { if (state.phase !== i) { state.phase = i; triggerScan(); } }
+    setPhase: i => { if (state.phase !== i) { state.phase = i; triggerScan(); } },
+    setPaused: v => { state.paused = v; }
   };
 }
 
 createEngine().then(api => {
   engine = api;
   api.setModel(model); api.setThrottle(throttle); api.setExplode(explode); api.setPhase(Math.max(phase, 0));
+  api.setPaused($('#stageSetup').classList.contains('view-comp'));
   engineReady = true;
 }).catch(err => {
   console.warn('3D engine unavailable:', err);
