@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Saira:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=2">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -424,7 +424,7 @@
 </section>
 
 <!-- ============ 06 CLOSE ============ -->
-<section id="close" class="sec close" data-label="Approval">
+<section id="close" class="sec close" data-label="Thank You">
   <div class="close-bg"><img src="assets/earth.jpg" alt="" loading="lazy"></div>
   <div class="wrap close-grid">
     <div data-reveal>
@@ -434,12 +434,6 @@
       <div class="close-cta">
         <a href="#hero" class="btn ghost" data-magnetic>Replay briefing <span data-icon="up"></span></a>
       </div>
-    </div>
-    <div class="approval panel" data-reveal="right" data-observe>
-      <h3><span data-icon="pen"></span>Approval</h3>
-      <div class="sig"><label>Name</label><div class="line"></div></div>
-      <div class="sig"><label>Signature</label><div class="line"></div></div>
-      <div class="approval-foot"><img src="assets/edge-logo-white.png" alt="EDGE"><span>Turbojet Programme</span></div>
     </div>
   </div>
 </section>
@@ -996,6 +990,16 @@ const compView = $('#compView');
     engine?.setPaused(comp);
   }));
 })();
+// 3D depth: the deck images tilt and float with the pointer
+if (finePointer && !reduced) {
+  const cv = $('#compView');
+  cv.addEventListener('pointermove', e => {
+    const r = cv.getBoundingClientRect();
+    cv.style.setProperty('--rx', ((e.clientY - r.top) / r.height - .5) * -10 + 'deg');
+    cv.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 14 + 'deg');
+  });
+  cv.addEventListener('pointerleave', () => { cv.style.setProperty('--rx', '0deg'); cv.style.setProperty('--ry', '0deg'); });
+}
 function setCompPhase(i) {
   compView.dataset.phase = i;
   PARTS.forEach(p => {

@@ -478,7 +478,10 @@ input[type="range"]:focus-visible { outline: 1px dashed var(--or); outline-offse
 .sview button { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; padding: 6px 12px; color: var(--muted); border-radius: 1px; transition: background .3s, color .3s; }
 .sview button.active { background: var(--or); color: #fff; }
 .stage.view-comp canvas, .stage.view-comp .stage-labels, .stage.view-comp .stage-glow { display: none; }
-.comp-view { position: absolute; inset: 52px 14px 46px; display: none; container-type: size; }
+.comp-view { position: absolute; inset: 52px 14px 46px; display: none; container-type: size; perspective: 1400px; --rx: 0deg; --ry: 0deg; }
+.comp-sheet, .comp-engine { transform: rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0); transform-style: preserve-3d; transition: transform .5s var(--ease); animation: floaty 6s ease-in-out infinite; }
+.comp-engine { animation-delay: -3s; }
+@keyframes floaty { 50% { translate: 0 -6px; } }
 .stage.view-comp .comp-view { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 1.4cqw, 18px); }
 .comp-sheet { flex: none; width: min(69cqw, (100cqh - 16px) * 2.41 + 16px); background: #fff; padding: 8px; border-radius: 3px; box-shadow: 0 24px 50px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.1); }
 .comp-img { position: relative; }
@@ -638,7 +641,7 @@ input[type="range"]:focus-visible { outline: 1px dashed var(--or); outline-offse
 .close-bg { position: absolute; inset: 0; z-index: -2; }
 .close-bg img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; opacity: .9; }
 .close::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(3,5,8,.95) 0%, rgba(3,5,8,.7) 38%, rgba(3,5,8,.05) 70%), linear-gradient(180deg, var(--bg) 0%, transparent 25%, transparent 80%, var(--bg) 100%); }
-.close-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 40px; align-items: end; width: 100%; }
+.close-grid { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: end; width: 100%; }
 .thanks { margin: 22px 0 0; font-weight: 900; font-size: clamp(64px, 11vw, 180px); line-height: .86; text-transform: uppercase; }
 .thanks span { display: block; }
 .thanks .o { color: var(--or); text-shadow: 0 0 60px rgba(254,64,13,.4); }
