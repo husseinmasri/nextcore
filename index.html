@@ -1,0 +1,1390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EDGE · Turbojet Programme</title>
+<meta name="description" content="Turbojet Engine Manufacturing & Localization Project — interactive programme briefing.">
+<meta name="theme-color" content="#04070a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Saira:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body class="loading">
+
+<!-- ============ LOADER ============ -->
+<div id="loader" aria-hidden="true">
+  <div class="ld-inner">
+    <div class="ld-turbine">
+      <svg viewBox="0 0 200 200">
+        <g class="ring">
+          <circle cx="100" cy="100" r="94" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1" stroke-dasharray="2 6"/>
+          <path d="M100 6 A94 94 0 0 1 194 100" fill="none" stroke="#fe400d" stroke-width="2"/>
+        </g>
+        <circle cx="100" cy="100" r="78" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+        <g class="blades" id="ldBlades"></g>
+        <circle cx="100" cy="100" r="16" fill="#0b1015" stroke="#fe400d" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="5" fill="#fe400d"/>
+      </svg>
+    </div>
+    <img class="ld-logo" src="assets/edge-logo-white.png" alt="EDGE">
+    <div class="ld-meta"><span>IGNITION SEQUENCE</span><span class="ld-pct" id="ldPct">0</span><span>%</span></div>
+    <div class="ld-bar"><i id="ldBar"></i></div>
+  </div>
+</div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="atmo-grid" aria-hidden="true"></div>
+<div class="atmo-scan" aria-hidden="true"></div>
+<div class="atmo-grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="progress-line" id="progress" aria-hidden="true"></div>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar" id="topbar">
+  <div class="tb-left">
+    <a href="#hero" class="tb-logo" aria-label="EDGE — back to top"><img src="assets/edge-logo-white.png" alt="EDGE"></a>
+    <div class="tb-crumb">NextCore <span>/</span> <b id="crumb">Turbojet Programme</b></div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-count"><b id="secNum">01</b> / <span id="secTotal">06</span></div>
+    <button class="tb-btn" id="presentBtn" data-hover title="Presentation mode (F)">
+      <span data-icon="expand"></span><span class="lbl">Present</span>
+    </button>
+  </div>
+</header>
+
+<nav class="rail" id="rail" aria-label="Sections"></nav>
+
+<main>
+
+<!-- ============ 01 HERO ============ -->
+<section id="hero" class="hero" data-label="Turbojet Programme">
+  <div class="hero-bg" data-depth="12"><img src="assets/earth.jpg" alt="" fetchpriority="high"></div>
+  <div class="hero-flare" aria-hidden="true"></div>
+  <div class="hero-slashes" data-depth="-22" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <svg class="hero-orbits" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path id="orb1" d="M 420 980 C 700 300, 1250 120, 1720 240"/>
+    <path id="orb2" d="M 760 -40 C 1050 140, 1400 220, 1700 520"/>
+    <path id="orb3" d="M 980 980 C 1180 640, 1420 470, 1720 420"/>
+    <circle r="3.2"><animateMotion dur="9s" repeatCount="indefinite" rotate="auto"><mpath href="#orb1"/></animateMotion></circle>
+    <circle r="2.4"><animateMotion dur="12s" begin="2s" repeatCount="indefinite"><mpath href="#orb2"/></animateMotion></circle>
+    <circle r="2.8"><animateMotion dur="10s" begin="4s" repeatCount="indefinite"><mpath href="#orb3"/></animateMotion></circle>
+  </svg>
+
+  <div class="hud hud-tr" aria-hidden="true">
+    UAE Defense Industrial Ecosystem<br>
+    SYS <b>▸ ONLINE</b> · <span id="clock">--:--:--</span> GST
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span class="pulse"></span>EDGE × NextCore · Programme Briefing</div>
+    <span class="hero-bar"></span>
+    <h1 class="hero-title">
+      <span class="line" data-split>Turbojet</span>
+      <span class="line accent" data-split data-base="300">Engine</span>
+    </h1>
+    <p class="hero-sub">Manufacturing &amp; Localization Project</p>
+    <div class="hero-cta">
+      <a href="#portfolio" class="btn primary" data-magnetic>Begin briefing <span data-icon="arrow"></span></a>
+      <button class="btn ghost" data-magnetic data-present>Presentation mode <span data-icon="expand"></span></button>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true"><i></i>SCROLL</div>
+
+  <div class="hero-stats">
+    <div class="hs"><b data-count="2" data-pad="2">00</b><span>Engine platforms · NJ40 / NJ120</span></div>
+    <div class="hs"><b data-count="15000">0</b><span>Engines / year at full rate</span></div>
+    <div class="hs"><b><span data-count="25">0</span><small>%</small></b><span>Target cost reduction</span></div>
+    <div class="hs"><b>ZERO</b><span>Shareholder funding</span></div>
+  </div>
+</section>
+
+<!-- ============ 02 PORTFOLIO ============ -->
+<section id="portfolio" class="sec portfolio" data-label="Product Portfolio">
+  <div class="wrap">
+    <div class="sec-head">
+      <div data-reveal>
+        <div class="kicker">02 — NextCore</div>
+        <h2 class="sec-title">Turbojet Engine <em>Product Portfolio</em></h2>
+      </div>
+      <div class="sec-index" aria-hidden="true">02</div>
+    </div>
+
+    <div class="pf-grid">
+      <div class="pf-info" data-reveal="left">
+        <div class="model-switch" id="modelSwitch" data-active="nj40" role="tablist" aria-label="Engine model">
+          <span class="glider"></span>
+          <button class="active" role="tab" aria-selected="true" data-model="nj40"><b>NJ40</b><small>Tactical UAV</small></button>
+          <button role="tab" aria-selected="false" data-model="nj120"><b>NJ120</b><small>Larger UAV platforms</small></button>
+        </div>
+        <h3 class="pf-tag" id="pfTag">Compact. Efficient. Reliable.</h3>
+        <p class="pf-desc" id="pfDesc"></p>
+        <div class="kicker" style="margin-top:6px">Technical specifications</div>
+        <div class="spec-grid" id="specGrid"></div>
+        <div class="pf-cost">
+          <div class="panel"><span>Engine assembly kit cost</span><b data-spec="kit">~USD 8.7K</b></div>
+          <div class="panel"><span>Local manufacturing cost</span><b class="accent" data-spec="local">~USD 6.5K</b></div>
+          <div class="panel"><span>Application · matched to</span><b data-spec="app">SHADOW 25</b></div>
+        </div>
+      </div>
+
+      <div class="pf-stage-wrap" data-reveal="right">
+        <div class="stage" id="stagePortfolio">
+          <div class="stage-glow"></div>
+          <div class="stage-labels"></div>
+          <div class="stage-hud">
+            <span class="c c1"></span><span class="c c2"></span><span class="c c3"></span><span class="c c4"></span>
+            <div class="readout">Model <b id="roModel">NJ40</b><br>Rotor <b id="roRpm">IDLE</b><br>Thrust <b id="roThrust">—</b></div>
+            <div class="hint"><span data-icon="rotate"></span><span id="dragHint">Drag to rotate</span></div>
+            <div class="dims">
+              <div class="dim">Length<b><span data-spec="lengthNum">460</span><small>mm</small></b></div>
+              <div class="dim">Diameter<b><span data-spec="diaNum">177</span><small>mm</small></b></div>
+            </div>
+          </div>
+        </div>
+        <div class="stage-ui panel">
+          <div class="throttle">
+            <label for="throttle">Throttle</label>
+            <input type="range" id="throttle" min="0" max="100" value="35" aria-label="Throttle">
+            <output id="thrOut"><b>35%</b></output>
+          </div>
+          <div class="toggles">
+            <button class="chip" id="explodeBtn" aria-pressed="false" data-hover><span data-icon="explode"></span>Exploded view</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 FINANCIALS ============ -->
+<section id="financials" class="sec" data-label="Financial Overview">
+  <div class="wrap">
+    <div class="sec-head">
+      <div data-reveal>
+        <div class="kicker">03 — Financial Overview</div>
+        <h2 class="sec-title">Financial <em>Summary</em></h2>
+      </div>
+      <div class="sec-index" aria-hidden="true">03</div>
+    </div>
+
+    <div class="fin-grid">
+      <!-- price -->
+      <article class="panel spot c-price" data-reveal data-observe>
+        <div class="ph">
+          <div class="panel-title"><span class="ico" data-icon="signal"></span>Market price</div>
+          <div class="legend"><span class="edge"><i></i>EDGE price</span><span class="ext"><i></i>External market</span></div>
+        </div>
+        <div class="price-row">
+          <div class="pr-head"><h4>Price of NJ120</h4><span class="delta">−7.9% vs market</span></div>
+          <div class="bar-line"><span>EDGE</span><div class="track edge"><i style="--w:.9206;--d:.1s"></i></div><b data-count="58000" data-prefix="$">$0</b></div>
+          <div class="bar-line"><span>External</span><div class="track ext"><i style="--w:1;--d:.25s"></i></div><b data-count="63000" data-prefix="$">$0</b></div>
+        </div>
+        <div class="price-row">
+          <div class="pr-head"><h4>Price of NJ40</h4><span class="delta">−12.5% vs market</span></div>
+          <div class="bar-line"><span>EDGE</span><div class="track edge"><i style="--w:.875;--d:.4s"></i></div><b data-count="10500" data-prefix="$">$0</b></div>
+          <div class="bar-line"><span>External</span><div class="track ext"><i style="--w:1;--d:.55s"></i></div><b data-count="12000" data-prefix="$">$0</b></div>
+        </div>
+      </article>
+
+      <!-- models -->
+      <article class="panel c-models" data-reveal style="--d:.1s">
+        <div class="ph"><div class="panel-title"><span class="ico" data-icon="engine"></span>Engine platforms</div></div>
+        <div class="models">
+          <div class="model-card">
+            <div class="img"><img src="assets/nj40-render.jpg" alt="NJ40 turbojet engine render" loading="lazy"></div>
+            <div class="meta"><h4>NJ40</h4><p>Compact. Efficient. Reliable.</p>
+              <dl><dt>LENGTH</dt><dt>DIAMETER</dt><dd>460 mm</dd><dd>177 mm</dd></dl></div>
+          </div>
+          <div class="model-card">
+            <div class="img"><img src="assets/nj120-render.jpg" alt="NJ120 turbojet engine render" loading="lazy"></div>
+            <div class="meta"><h4>NJ120</h4><p>Higher Thrust. Greater Capability.</p>
+              <dl><dt>LENGTH</dt><dt>DIAMETER</dt><dd>732 mm</dd><dd>228 mm</dd></dl></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- cost -->
+      <article class="panel spot c-cost" data-reveal data-observe>
+        <div class="ph">
+          <div class="panel-title"><span class="ico" data-icon="coins"></span>Cost breakdown</div>
+        </div>
+        <table class="cost-table">
+          <thead><tr><th>Item</th><th>EDGE cost</th><th>External market cost</th></tr></thead>
+          <tbody>
+            <tr><td>Assembly kit cost of NJ120<span class="minibar"><i style="--w:100%;--d:.1s"></i></span></td><td data-count="43625" data-prefix="$">$0</td><td data-count="43625" data-prefix="$">$0</td></tr>
+            <tr><td>Assembly kit cost of NJ40<span class="minibar"><i style="--w:20.08%;--d:.2s"></i></span></td><td data-count="8760" data-prefix="$">$0</td><td data-count="8760" data-prefix="$">$0</td></tr>
+            <tr><td>Localized manufacturing cost of NJ120 <span class="tagloc">−25%</span><span class="minibar loc"><i style="--w:75%;--d:.3s"></i></span></td><td data-count="32719" data-prefix="$">$0</td><td data-count="32719" data-prefix="$">$0</td></tr>
+            <tr><td>Localized manufacturing cost of NJ40 <span class="tagloc">−25%</span><span class="minibar loc"><i style="--w:15.06%;--d:.4s"></i></span></td><td data-count="6570" data-prefix="$">$0</td><td data-count="6570" data-prefix="$">$0</td></tr>
+          </tbody>
+        </table>
+        <div class="parity"><span data-icon="equal"></span>Localized manufacturing brings unit cost 25% below the assembly-kit cost on both platforms.</div>
+      </article>
+
+      <!-- metrics -->
+      <article class="panel spot c-metrics" data-reveal data-observe style="--d:.1s">
+        <div class="ph">
+          <div class="panel-title"><span class="ico" data-icon="barchart"></span>Financial metrics</div>
+          <div class="legend"><span class="edge"><i></i>EDGE</span><span class="ext"><i></i>External</span></div>
+        </div>
+        <div class="gauges">
+          <div class="gauge" data-edge="39" data-ext="45"><svg viewBox="0 0 200 200"></svg><h5>Gross margin</h5></div>
+          <div class="gauge" data-edge="34" data-ext="39"><svg viewBox="0 0 200 200"></svg><h5>Net margin</h5></div>
+        </div>
+        <div class="kv">
+          <span class="h"></span><span class="h">EDGE</span><span class="h">External</span>
+          <span class="k">NPV</span><span class="v edge">$<span data-count="1" data-dec="0">0</span>B</span><span class="v ext">$<span data-count="1.3" data-dec="1">0</span>B</span>
+          <span class="k">IRR margin</span><span class="v edge small">No funding</span><span class="v ext small">No funding</span>
+        </div>
+      </article>
+
+      <!-- zero -->
+      <article class="panel c-zero" data-reveal>
+        <div class="zero-bg"></div><div class="zero-beam"></div>
+        <div class="zero-inner">
+          <h3 class="zero-big"><span class="o">Zero</span><span>Shareholder</span><span>Funding.</span></h3>
+          <div class="zero-side">
+            <p class="lead">Value creation without equity investment</p>
+            <div class="pillars">
+              <div class="pillar"><span class="ico" data-icon="handshake"></span><p>EDGE internal demand from ADASI for supply contract with 10% advance payment to NextCore.</p></div>
+              <div class="pillar"><span class="ico" data-icon="gear"></span><p>EDGE production and integration capabilities.</p></div>
+              <div class="pillar"><span class="ico" data-icon="network"></span><p>UAE Defense Industrial Ecosystem.</p></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 MANUFACTURING SETUP ============ -->
+<section id="setup" class="setup" data-label="Manufacturing Setup">
+  <div class="setup-track" id="setupTrack">
+    <div class="setup-sticky">
+      <div class="wrap">
+        <div class="setup-head">
+          <div>
+            <div class="kicker">04 — NextCore</div>
+            <h2 class="sec-title">Manufacturing <em>Setup Overview</em></h2>
+            <p class="sec-sub">Assembly/Test vs. Full Manufacturing based on 15,000 engines/year</p>
+          </div>
+        </div>
+
+        <div class="phase-rail" id="phaseRail" role="tablist" aria-label="Manufacturing phase">
+          <span class="fill"></span>
+          <button class="pr-btn active" data-phase="0" role="tab"><span class="n">01</span><b>Establish Operations</b><small>Assembly + Engine Test</small></button>
+          <button class="pr-btn" data-phase="1" role="tab"><span class="n">02</span><b>Local Capability Expansion</b><small>Core Machining + Assembly + Engine Test</small></button>
+          <button class="pr-btn" data-phase="2" role="tab"><span class="n">03</span><b>Full Local Manufacturing</b><small>100% Machining + Assembly + Engine Test</small></button>
+        </div>
+
+        <div class="setup-body">
+          <div class="setup-stage-wrap">
+            <div class="stage" id="stageSetup">
+              <div class="stage-glow"></div>
+              <div class="stage-labels"></div>
+              <div class="stage-hud">
+                <span class="c c1"></span><span class="c c2"></span><span class="c c3"></span><span class="c c4"></span>
+                <div class="readout">Exploded assembly<br>Sourcing <b id="roSrc">OEM</b></div>
+              </div>
+              <div class="loc-legend"><span class="oem"><i></i>OEM supplied</span><span class="loc"><i></i>Locally machined</span></div>
+              <div class="comp-badge" id="compBadge">100% OEM components</div>
+            </div>
+          </div>
+
+          <div class="phase-panel panel">
+            <div class="pp-scope" id="ppScope">Phase 01 · Assembly + Engine Test</div>
+            <h3 class="pp-name" id="ppName">Establish Operations</h3>
+            <div class="pp-vol"><b id="ppVol">1,000</b><span>Engines / year</span></div>
+            <div class="pp-stats">
+              <div class="pp-stat"><span data-icon="capex"></span><span>CAPEX</span><div class="pp-bars" data-bar="capex"><i></i><i></i><i></i></div><b id="ppCapex">USD 13 M</b></div>
+              <div class="pp-stat"><span data-icon="staff"></span><span>Staff</span><div class="pp-bars" data-bar="staff"><i></i><i></i><i></i></div><b id="ppStaff">90 FTE</b></div>
+              <div class="pp-stat"><span data-icon="gear"></span><span>Equipment</span><div class="pp-bars" data-bar="equip"><i></i><i></i><i></i></div><b id="ppEquip">60 sets</b></div>
+            </div>
+            <div class="pp-note"><span data-icon="factory"></span><span id="ppNote">8 Assembly + 8 test cells + tools</span></div>
+          </div>
+        </div>
+
+        <div class="reduction panel">
+          <div class="rd-title"><b>Expected cost reduction</b><span>Compared to assembly kit cost</span></div>
+          <div class="rd-meter" id="rdMeter">
+            <div class="tr"></div><div class="fl"></div>
+            <div class="mk" style="left:0%"><i></i><span>P1 · 0%</span></div>
+            <div class="mk" style="left:50%"><i></i><span>P2 · 12.5%</span></div>
+            <div class="mk" style="left:100%"><i></i><span>P3 · 25%</span></div>
+          </div>
+          <div class="rd-big" id="rdBig">0%</div>
+          <div class="rd-units">
+            <span>NJ40 unit cost<b id="rdNj40">$8,760</b></span>
+            <span>NJ120 unit cost<b id="rdNj120">$43,625</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 FACTORY ============ -->
+<section id="factory" class="sec" data-label="Factory Layout">
+  <div class="wrap">
+    <div class="sec-head">
+      <div data-reveal>
+        <div class="kicker">05 — NextCore</div>
+        <h2 class="sec-title">Turbojet Engine <em>Factory Layout</em></h2>
+        <p class="sec-sub">~8,000 SQM facility · Target 15,000 engines / year. Hover or tap any zone to inspect it.</p>
+      </div>
+      <div class="sec-index" aria-hidden="true">05</div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi panel" data-reveal><span class="ico" data-icon="engine"></span><b data-count="15000">0</b><span>Engines / year</span></div>
+      <div class="kpi panel" data-reveal style="--d:.08s"><span class="ico" data-icon="calendar"></span><b data-count="1250">0</b><span>Engines / month</span></div>
+      <div class="kpi panel" data-reveal style="--d:.16s"><span class="ico" data-icon="clock"></span><b>~<span data-count="60">0</span>/day</b><span>22 working days</span></div>
+      <div class="kpi panel" data-reveal style="--d:.24s"><span class="ico" data-icon="conveyor"></span><b>~<span data-count="8">0</span></b><span>Engines / line / day</span></div>
+    </div>
+
+    <div class="plan-controls" data-reveal>
+      <div class="grp" id="phaseFilter" role="group" aria-label="Filter by phase">
+        <button class="chip pha active" data-f="all"><i></i>All zones</button>
+        <button class="chip ph1" data-f="1"><i></i>Phase 1</button>
+        <button class="chip ph2" data-f="2"><i></i>Phase 2</button>
+        <button class="chip ph3" data-f="3"><i></i>Phase 3</button>
+      </div>
+      <div class="grp">
+        <button class="chip" id="flowBtn" aria-pressed="false"><span data-icon="flow"></span>Material flow</button>
+        <button class="chip" id="tiltBtn" aria-pressed="false"><span data-icon="cube"></span>3D perspective</button>
+      </div>
+    </div>
+
+    <div class="plan-layout" data-reveal>
+      <div>
+        <div class="plan-shell" id="planShell">
+          <div class="plan" id="plan" data-filter="all">
+            <img src="assets/floorplan.jpg" alt="Factory floor plan, 100 m by 80 m" loading="lazy">
+            <svg viewBox="0 0 1400 604" preserveAspectRatio="none" id="planSvg">
+              <g id="zones"></g>
+              <g class="flow" id="flow">
+                <path class="path-bg" id="flowPathBg"/>
+                <path class="path" id="flowPath"/>
+                <g id="stations"></g>
+                <circle class="pulse-dot" r="7"><animateMotion dur="14s" repeatCount="indefinite" rotate="auto"><mpath href="#flowPath"/></animateMotion></circle>
+              </g>
+            </svg>
+            <div class="plan-scan"></div>
+          </div>
+          <div class="ztip" id="ztip"><b></b><span></span></div>
+        </div>
+        <div class="plan-dims"><span>◂ 100 M ▸</span><span>~8,000 SQM · 20 ZONES</span><span>80 M ▴▾</span></div>
+        <div class="flow-legend" id="flowLegend" aria-live="polite"></div>
+      </div>
+      <aside class="zone-panel panel" id="zonePanel" aria-live="polite">
+        <div class="zp-ph"><i id="zpDot"></i><span id="zpPh">Phase 1</span></div>
+        <h4 id="zpName">Assembly Area (8 lines)</h4>
+        <div class="zp-area"><b id="zpArea">1,100</b><span>m²</span></div>
+        <div class="zp-share"><div class="t"><i id="zpBar"></i></div><span id="zpShare">13.8% of facility footprint</span></div>
+        <p id="zpDesc"></p>
+        <ul class="zp-list" id="zpList"></ul>
+        <div class="zp-hint">Select a zone on the plan</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 CLOSE ============ -->
+<section id="close" class="sec close" data-label="Approval">
+  <div class="close-bg"><img src="assets/earth.jpg" alt="" loading="lazy"></div>
+  <div class="wrap close-grid">
+    <div data-reveal>
+      <div class="kicker">06 — Turbojet Engine Manufacturing &amp; Localization</div>
+      <h2 class="thanks"><span>Thank</span><span class="o">You</span></h2>
+      <p class="close-sub">Manufacturing &amp; Localization Project</p>
+      <div class="close-cta">
+        <a href="#hero" class="btn ghost" data-magnetic>Replay briefing <span data-icon="up"></span></a>
+      </div>
+    </div>
+    <div class="approval panel" data-reveal="right" data-observe>
+      <h3><span data-icon="pen"></span>Approval</h3>
+      <div class="sig"><label>Name</label><div class="line"></div></div>
+      <div class="sig"><label>Signature</label><div class="line"></div></div>
+      <div class="approval-foot"><img src="assets/edge-logo-white.png" alt="EDGE"><span>Turbojet Programme</span></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>EDGE · NextCore Turbojet Engine Programme</span>
+  <span class="keys"><kbd>←</kbd><kbd>→</kbd> navigate · <kbd>F</kbd> present</span>
+</footer>
+
+<script type="module">
+/* =========================================================================
+   Data
+   ========================================================================= */
+const MODELS = {
+  nj40: {
+    name: 'NJ40', tag: 'Compact. Efficient. Reliable.',
+    desc: 'High-performance turbojet engine designed for tactical UAV applications, offering reliable thrust, with optimized fuel efficiency.',
+    thrustMax: 43, lengthNum: '460', diaNum: '177',
+    kit: '~USD 8.7K', local: '~USD 6.5K', app: 'SHADOW 25',
+    specs: { thrust: '≤43 daN', dia: '177 mm', len: '460 mm', weight: '5.5 kg', tsfc: '1.5 kg/daN·h', alt: '12,000 m', start: '4,000 m', speed: 'Mach 0.9', temp: '−40°C to +55°C', tbo: '25 h' }
+  },
+  nj120: {
+    name: 'NJ120', tag: 'Higher Thrust. Greater Capability.',
+    desc: 'Designed for larger UAV platforms, the NJ120 delivers increased thrust and enhanced performance for extended mission profiles.',
+    thrustMax: 120, lengthNum: '732', diaNum: '228',
+    kit: '~USD 43.6K', local: '~USD 32.7K', app: 'DARK WING B30',
+    specs: { thrust: '≤120 daN', dia: '228 mm', len: '732 mm', weight: '16 kg', tsfc: '1.3 kg/daN·h', alt: '12,000 m', start: '4,000 m', speed: 'Mach 0.9', temp: '−40°C to +55°C', tbo: '25 h' }
+  }
+};
+const SPEC_ROWS = [
+  ['thrust', 'Thrust', 'fan'], ['dia', 'Diameter', 'diameter'], ['len', 'Length', 'length'], ['weight', 'Weight', 'weight'],
+  ['tsfc', 'Max. fuel consumption (TSFC)', 'fuel'], ['alt', 'Max. operating altitude', 'mountain'], ['start', 'Max. start altitude', 'launch'],
+  ['speed', 'Max. operating speed', 'gauge'], ['temp', 'Operating temperature', 'thermo'], ['tbo', 'Time between overhaul', 'clock']
+];
+const PHASES = [
+  { n: '01', name: 'Establish Operations', scope: 'Assembly + Engine Test', vol: 1000, capex: 13, staff: 90, equip: 60, note: '8 Assembly + 8 test cells + tools', comp: '100% OEM components', red: 0, src: 'OEM' },
+  { n: '02', name: 'Local Capability Expansion', scope: 'Core Machining + Assembly + Engine Test', vol: 15000, capex: 28, staff: 120, equip: 75, note: 'CNC / EDM / inspection', comp: 'Core Machining components', red: 12.5, src: 'Core localized' },
+  { n: '03', name: 'Full Local Manufacturing', scope: '100% Machining + Assembly + Engine Test', vol: 15000, capex: 0, staff: 150, equip: 135, note: 'CNC / EDM / inspection', comp: '100% Machining components', red: 25, src: '100% localized' }
+];
+const KIT = { nj40: 8760, nj120: 43625 };
+// Floor-plan zones, in the plan image's 1400 × 604 coordinate space. ph: 1/2/3 per the deck legend; 0 = shared.
+const ZONES = [
+  { id: 'cast', name: 'Cast / Forged Blanks Storage', area: 350, ph: 2, r: [70, 35, 158, 263], desc: 'Raw cast and forged blanks staged for machining.' },
+  { id: 'alu', name: 'Aluminium Bar / Sheet Storage', area: 350, ph: 2, r: [232, 35, 153, 263], desc: 'Bar and sheet stock storage.' },
+  { id: 'kit', name: 'Component / Kit Warehouse', area: 550, ph: 2, r: [390, 35, 190, 263], desc: 'Component and assembly-kit warehousing.' },
+  { id: 'mach', name: 'Machining Area (70 machines)', area: 2000, ph: 3, r: [588, 35, 504, 265], desc: 'Total equipment: 75 units (70 machining + 5 inspection).',
+    list: [['CNC Lathes', '×25'], ['Turn-Mill', '×5'], ['CNC Grinders', '×5'], ['Wire EDM', '×5'], ['6-Axis Hole EDM', '×5'], ['VMC', '×5'], ['4-Axis VMC', '×5'], ['5-Axis CNC', '×10']] },
+  { id: 'tool', name: 'Tool Room', area: 150, ph: 3, r: [1100, 35, 245, 60] },
+  { id: 'maint', name: 'Maintenance', area: 150, ph: 3, r: [1100, 98, 245, 57] },
+  { id: 'test', name: 'Engine Test Cells (8)', area: 450, ph: 2, r: [1100, 160, 245, 138], desc: 'Eight engine test cells for acceptance testing.', list: [['Test cells', '8']] },
+  { id: 'aisle', name: 'Main Logistics Aisle', area: 500, ph: 0, r: [60, 305, 1285, 40], desc: 'Central logistics spine linking receiving, production and dispatch.' },
+  { id: 'wip', name: 'WIP Storage', area: 250, ph: 1, r: [60, 355, 162, 120] },
+  { id: 'pre', name: 'Pre-Assembly Inspection & Kitting', area: 350, ph: 1, r: [225, 355, 185, 120] },
+  { id: 'asm', name: 'Assembly Area (8 lines)', area: 1100, ph: 1, r: [413, 355, 437, 120], desc: 'Eight parallel engine assembly lines.', list: [['Assembly lines', '8'], ['Output / line / day', '~8']] },
+  { id: 'sup', name: 'Assembly Support', area: 200, ph: 1, r: [853, 355, 147, 120] },
+  { id: 'qc', name: 'QC & Final Inspection', area: 300, ph: 1, r: [1003, 355, 180, 120], list: [['Inspection equipment', '×5']] },
+  { id: 'fg', name: 'Finished Goods Store', area: 300, ph: 1, r: [1186, 355, 159, 120] },
+  { id: 'office', name: 'Office / Meeting', area: 250, ph: 1, r: [60, 480, 295, 85] },
+  { id: 'rec', name: 'Reception', area: 100, ph: 1, r: [358, 480, 154, 85] },
+  { id: 'staff', name: 'Staff Facilities', area: 250, ph: 1, r: [515, 480, 303, 85] },
+  { id: 'rest', name: 'Restrooms / Changing', area: 150, ph: 1, r: [821, 480, 179, 85] },
+  { id: 'util', name: 'Utilities', area: 100, ph: 1, r: [1003, 480, 125, 85] },
+  { id: 'pack', name: 'Packing / Dispatch', area: 150, ph: 1, r: [1131, 480, 214, 85] }
+];
+const FLOW = [[8, 212], [150, 212], [150, 325], [840, 325], [840, 190], [840, 325], [318, 325], [318, 415], [630, 415], [630, 325], [1222, 325], [1222, 230], [1222, 325], [1093, 325], [1093, 415], [1265, 415], [1265, 522], [1352, 522], [1365, 598]];
+const STATIONS = [[150, 212, 'Raw material'], [840, 190, 'Machining'], [318, 415, 'Kitting'], [630, 415, 'Assembly'], [1222, 230, 'Engine test'], [1093, 415, 'QC'], [1265, 415, 'Finished goods'], [1265, 522, 'Packing & dispatch']];
+
+/* =========================================================================
+   Icons
+   ========================================================================= */
+const ICONS = {
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+  expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  rotate: '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/>',
+  explode: '<path d="M2 12h4M18 12h4M9 7v10M15 7v10M4.5 9.5 2 12l2.5 2.5M19.5 9.5 22 12l-2.5 2.5"/>',
+  fan: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 10c-.5-3 .5-5 3-6.5M14 12c3-.5 5 .5 6.5 3M12 14c.5 3-.5 5-3 6.5M10 12c-3 .5-5-.5-6.5-3"/>',
+  diameter: '<circle cx="12" cy="12" r="9"/><path d="M6.2 17.8 17.8 6.2M13.5 6.2h4.3v4.3M10.5 17.8H6.2v-4.3"/>',
+  length: '<path d="M3 6v12M21 6v12M3 12h18M6.5 9 3.5 12l3 3M17.5 9l3 3-3 3"/>',
+  weight: '<path d="M6.5 9h11L20 20H4z"/><circle cx="12" cy="5.5" r="2.5"/>',
+  fuel: '<path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M3 21h12M6.5 7h5v4h-5zM14 9h2a2 2 0 0 1 2 2v5.5a1.5 1.5 0 0 0 3 0V8l-3-3"/>',
+  mountain: '<path d="M2 20 9 7l4 6.5 2.5-3.5L22 20z"/><path d="M7.4 10l1.6 1.4 1.4-1.2"/>',
+  launch: '<path d="M12 3v13M6.5 8.5 12 3l5.5 5.5M4 21h16"/>',
+  gauge: '<path d="M3.5 17a8.5 8.5 0 1 1 17 0"/><path d="M12 17l4.5-5.5"/><circle cx="12" cy="17" r="1.3"/><path d="M6 11.5l1 .8M12 7v1.3M18 11.5l-1 .8"/>',
+  thermo: '<path d="M10 14.5V5a2 2 0 1 1 4 0v9.5a4 4 0 1 1-4 0z"/><path d="M12 9v7.5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>',
+  signal: '<path d="M5 20v-4M10 20v-8M15 20V8M20 20V4" stroke-width="3"/>',
+  coins: '<ellipse cx="9" cy="6.5" rx="6" ry="2.5"/><path d="M3 6.5v4c0 1.4 2.7 2.5 6 2.5M15 6.5V9"/><path d="M3 10.5v4c0 1.4 2.7 2.5 6 2.5"/><ellipse cx="15.5" cy="13" rx="5.5" ry="2.3"/><path d="M10 13v4.5c0 1.3 2.5 2.3 5.5 2.3s5.5-1 5.5-2.3V13"/>',
+  barchart: '<path d="M3 21h18M6 17v-5M10.5 17V7M15 17V10M19.5 17V4"/>',
+  engine: '<path d="M2 10h2.5l2-3h7l2.5 3h2V8h3.5v8H18v-2h-2.5L13.5 17h-7l-2-3H2z"/><path d="M9 10.5h4"/>',
+  handshake: '<path d="m11 17 2 2a1 1 0 0 0 1.4 0l4.6-4.6a1 1 0 0 0 0-1.4L13 7l-3 3a1.4 1.4 0 0 1-2-2l3.5-3.5a2.5 2.5 0 0 1 3 0L18 7h3v7"/><path d="M3 7h3l5.5 5.5M3 7v7l5 5a1 1 0 0 0 1.4 0l.6-.6M8.5 15.5l2 2M11 13l2 2"/>',
+  gear: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.8M12 18.7v2.8M2.5 12h2.8M18.7 12h2.8M5.3 5.3l2 2M16.7 16.7l2 2M5.3 18.7l2-2M16.7 7.3l2-2"/><circle cx="12" cy="12" r="6.6"/>',
+  network: '<circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M10.7 7.3 6.3 15.7M13.3 7.3l4.4 8.4M7.6 18h8.8"/><circle cx="12" cy="13" r="1.4"/>',
+  capex: '<ellipse cx="12" cy="5" rx="8" ry="2.8"/><path d="M4 5v14c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8V5M4 12c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8"/>',
+  staff: '<circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c.6-3.6 3.3-6 6.5-6s5.9 2.4 6.5 6"/><circle cx="17.2" cy="9" r="2.4"/><path d="M16.5 14c2.8.3 4.7 2.5 5.1 6"/>',
+  factory: '<path d="M3 21V10l5 3v-3l5 3V5h3l1 4h1l1-4h2v16z"/><path d="M7 17h2M12 17h2M17 17h1"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2"/>',
+  conveyor: '<rect x="2" y="15" width="20" height="5" rx="2.5"/><path d="M6 15V9h5v6M13 15V5h5v10"/><circle cx="6" cy="17.5" r=".8"/><circle cx="12" cy="17.5" r=".8"/><circle cx="18" cy="17.5" r=".8"/>',
+  equal: '<path d="M5 9h14M5 15h14"/>',
+  pen: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3M3 22h18"/>',
+  flow: '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+  cube: '<path d="M12 3 3 8l9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>'
+};
+const svgIcon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+const hydrateIcons = (root = document) => root.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = svgIcon(el.dataset.icon); });
+
+/* =========================================================================
+   Helpers
+   ========================================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const fmt = (n, dec = 0) => n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(pointer: fine)').matches;
+const easeOut = t => 1 - Math.pow(1 - t, 4);
+
+function countUp(el, to, { dec = 0, prefix = '', suffix = '', pad = 0, dur = 1800 } = {}) {
+  const start = performance.now();
+  const render = (v) => {
+    let s = fmt(v, dec);
+    if (pad) s = s.padStart(pad, '0');
+    el.textContent = prefix + s + suffix;
+  };
+  if (reduced) return render(to);
+  const tick = (now) => {
+    const t = clamp((now - start) / dur, 0, 1);
+    render(dec ? to * easeOut(t) : Math.round(to * easeOut(t)));
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+function runCounters(scope) {
+  $$('[data-count]', scope).forEach(el => {
+    if (el.dataset.done) return;
+    el.dataset.done = 1;
+    countUp(el, parseFloat(el.dataset.count), { dec: +(el.dataset.dec || 0), prefix: el.dataset.prefix || '', suffix: el.dataset.suffix || '', pad: +(el.dataset.pad || 0) });
+  });
+}
+const GLYPHS = '0123456789#%$/<>+-=';
+function scramble(el, text, dur = 520) {
+  if (reduced || el.textContent === text) { el.textContent = text; return; }
+  const start = performance.now();
+  const tick = (now) => {
+    const t = clamp((now - start) / dur, 0, 1);
+    const reveal = Math.floor(text.length * t);
+    let out = '';
+    for (let i = 0; i < text.length; i++) out += (i < reveal || text[i] === ' ') ? text[i] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+    el.textContent = out;
+    if (t < 1) requestAnimationFrame(tick); else el.textContent = text;
+  };
+  requestAnimationFrame(tick);
+}
+
+/* =========================================================================
+   Build static UI
+   ========================================================================= */
+hydrateIcons();
+
+// loader turbine blades
+(() => {
+  const g = $('#ldBlades');
+  let s = '';
+  for (let i = 0; i < 18; i++) s += `<path transform="rotate(${i * 20} 100 100)" d="M100 84 C 108 70, 112 46, 104 26 L 98 26 C 100 46, 96 66, 100 84 Z" fill="rgba(220,226,232,.85)"/>`;
+  g.innerHTML = s;
+})();
+
+// split hero title into characters
+$$('[data-split]').forEach(el => {
+  const base = +(el.dataset.base || 0);
+  el.innerHTML = [...el.textContent.trim()].map((c, i) => `<span class="char" style="--i:${i};--base:${base}ms">${c}</span>`).join('');
+});
+
+// side rail
+const sections = $$('main > section');
+$('#secTotal').textContent = String(sections.length).padStart(2, '0');
+$('#rail').innerHTML = sections.map(s => `<a href="#${s.id}" data-hover><span>${s.dataset.label}</span><i></i></a>`).join('');
+
+// spec grid
+$('#specGrid').innerHTML = SPEC_ROWS.map(([k, label, ic]) => `<div class="spec">${svgIcon(ic)}<span>${label}</span><b data-spec-k="${k}"></b></div>`).join('');
+
+// gauges
+$$('.gauge').forEach(g => {
+  const e = +g.dataset.edge, x = +g.dataset.ext;
+  const R1 = 82, R2 = 66, C1 = 2 * Math.PI * R1, C2 = 2 * Math.PI * R2, span = .75;
+  let ticks = '';
+  for (let i = 0; i <= 30; i++) {
+    const a = (135 + i * 9) * Math.PI / 180, r1 = 94, r2 = i % 5 ? 90 : 87;
+    ticks += `<line x1="${100 + r1 * Math.cos(a)}" y1="${100 + r1 * Math.sin(a)}" x2="${100 + r2 * Math.cos(a)}" y2="${100 + r2 * Math.sin(a)}"/>`;
+  }
+  g.querySelector('svg').innerHTML = `
+    <g class="ticks">${ticks}</g>
+    <g transform="rotate(135 100 100)">
+      <circle class="bg" cx="100" cy="100" r="${R1}" stroke-width="10" stroke-dasharray="${C1 * span} ${C1}"/>
+      <circle class="arc edge" cx="100" cy="100" r="${R1}" stroke-width="10" stroke-dasharray="${C1 * span} ${C1}" stroke-dashoffset="${C1 * span}" data-target="${C1 * span * (1 - e / 100)}"/>
+      <circle class="bg" cx="100" cy="100" r="${R2}" stroke-width="6" stroke-dasharray="${C2 * span} ${C2}"/>
+      <circle class="arc ext" cx="100" cy="100" r="${R2}" stroke-width="6" stroke-dasharray="${C2 * span} ${C2}" stroke-dashoffset="${C2 * span}" data-target="${C2 * span * (1 - x / 100)}"/>
+    </g>
+    <text class="val" x="100" y="106" text-anchor="middle"><tspan data-g="e">0</tspan><tspan font-size="18" fill="#fe400d">%</tspan></text>
+    <text class="sub" x="100" y="128" text-anchor="middle">EXT ${x}%</text>`;
+});
+function fireGauges(scope) {
+  $$('.gauge', scope).forEach(g => {
+    if (g.dataset.done) return; g.dataset.done = 1;
+    $$('.arc', g).forEach(a => a.setAttribute('stroke-dashoffset', a.dataset.target));
+    countUp(g.querySelector('[data-g="e"]'), +g.dataset.edge, { dur: 2000 });
+  });
+}
+
+// factory zones + flow
+(() => {
+  const zg = $('#zones');
+  zg.innerHTML = ZONES.map(z => `<rect class="zone" data-id="${z.id}" data-ph="${z.ph}" x="${z.r[0]}" y="${z.r[1]}" width="${z.r[2]}" height="${z.r[3]}" rx="3" tabindex="0" role="button" aria-label="${z.name}, ${z.area} square metres"/>`).join('');
+  const d = 'M ' + FLOW.map(p => p.join(' ')).join(' L ');
+  $('#flowPath').setAttribute('d', d);
+  $('#flowPathBg').setAttribute('d', d);
+  $('#stations').innerHTML = STATIONS.map((s, i) => `<g class="stn"><circle cx="${s[0]}" cy="${s[1]}" r="13"/><text x="${s[0]}" y="${s[1] + 1}">${i + 1}</text><title>${s[2]}</title></g>`).join('');
+})();
+
+/* =========================================================================
+   Loader
+   ========================================================================= */
+const loader = $('#loader');
+const ldPct = $('#ldPct'), ldBar = $('#ldBar');
+let loadTarget = 0, loadShown = 0, engineReady = false, imagesReady = false;
+const criticalImgs = [$('.hero-bg img'), ...$$('.tb-logo img')];
+Promise.all(criticalImgs.map(img => img.complete ? 1 : new Promise(r => { img.onload = img.onerror = r; }))).then(() => { imagesReady = true; });
+const loadStart = performance.now();
+(function loadTick() {
+  const elapsed = performance.now() - loadStart;
+  loadTarget = Math.min(elapsed / 1600, 1) * (imagesReady ? 100 : 82);
+  if (!engineReady && elapsed < 6000) loadTarget = Math.min(loadTarget, 92);
+  loadShown = lerp(loadShown, loadTarget, .12);
+  const p = Math.round(loadShown);
+  ldPct.textContent = String(p).padStart(3, '0');
+  ldBar.style.transform = `scaleX(${loadShown / 100})`;
+  if (p >= 99) {
+    loader.classList.add('spool');
+    setTimeout(enter, 420);
+    return;
+  }
+  requestAnimationFrame(loadTick);
+})();
+function enter() {
+  loader.classList.add('done');
+  document.body.classList.remove('loading');
+  document.body.classList.add('ready');
+  setTimeout(() => runCounters($('.hero-stats')), 1900);
+}
+
+/* =========================================================================
+   Background particle field
+   ========================================================================= */
+(() => {
+  const c = $('#fx'), ctx = c.getContext('2d');
+  let w, h, dpr, parts = [], mx = 0, my = 0, tx = 0, ty = 0;
+  const N = innerWidth < 700 ? 70 : 150;
+  function size() {
+    dpr = Math.min(devicePixelRatio, 2);
+    w = c.width = innerWidth * dpr; h = c.height = innerHeight * dpr;
+  }
+  size(); addEventListener('resize', size);
+  for (let i = 0; i < N; i++) {
+    const ember = Math.random() < .22;
+    parts.push({ x: Math.random(), y: Math.random(), z: Math.random() * .9 + .1, ember, s: ember ? Math.random() * 1.6 + .6 : Math.random() * 1.1 + .3, v: Math.random() * .00025 + .00006, tw: Math.random() * 6.28 });
+  }
+  addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; }, { passive: true });
+  function frame(t) {
+    mx = lerp(mx, tx, .04); my = lerp(my, ty, .04);
+    ctx.clearRect(0, 0, w, h);
+    const scroll = scrollY * .00004;
+    for (const p of parts) {
+      if (!reduced) { p.y -= p.v * (p.ember ? 2.2 : .6); if (p.y < -.02) { p.y = 1.02; p.x = Math.random(); } }
+      const x = ((p.x - mx * .04 * p.z) * w);
+      const y = (((p.y - scroll * p.z) % 1 + 1) % 1 - my * .04 * p.z) * h;
+      const a = (.25 + .5 * Math.sin(t * .0012 + p.tw) ** 2) * p.z;
+      ctx.beginPath();
+      ctx.arc(x, y, p.s * dpr * p.z, 0, 6.283);
+      ctx.fillStyle = p.ember ? `rgba(255,${110 + (p.z * 60) | 0},50,${a})` : `rgba(210,225,240,${a * .7})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* =========================================================================
+   Cursor, magnetic buttons, spotlight cards, hero parallax
+   ========================================================================= */
+if (finePointer && !reduced) {
+  document.documentElement.classList.add('has-cursor');
+  const ring = $('.cursor'), dot = $('.cursor-dot');
+  let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y;
+  addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; dot.style.transform = `translate(${x}px,${y}px)`; }, { passive: true });
+  (function loop() { rx = lerp(rx, x, .18); ry = lerp(ry, y, .18); ring.style.transform = `translate(${rx}px,${ry}px)`; requestAnimationFrame(loop); })();
+  document.addEventListener('pointerover', e => { if (e.target.closest('a,button,[data-hover],.zone,input')) ring.classList.add('hover'); });
+  document.addEventListener('pointerout', e => { if (e.target.closest('a,button,[data-hover],.zone,input')) ring.classList.remove('hover'); });
+
+  $$('[data-magnetic]').forEach(b => {
+    b.addEventListener('pointermove', e => {
+      const r = b.getBoundingClientRect();
+      b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .18}px, ${(e.clientY - r.top - r.height / 2) * .3}px)`;
+    });
+    b.addEventListener('pointerleave', () => { b.style.transform = ''; });
+  });
+
+  const heroLayers = $$('#hero [data-depth]');
+  let hx = 0, hy = 0, thx = 0, thy = 0;
+  $('#hero').addEventListener('pointermove', e => { thx = e.clientX / innerWidth - .5; thy = e.clientY / innerHeight - .5; });
+  (function hloop() {
+    hx = lerp(hx, thx, .05); hy = lerp(hy, thy, .05);
+    heroLayers.forEach(l => { const d = +l.dataset.depth; l.style.transform = `translate3d(${hx * -d}px, ${hy * -d}px, 0)`; });
+    requestAnimationFrame(hloop);
+  })();
+}
+$$('.spot').forEach(el => el.addEventListener('pointermove', e => {
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+  el.style.setProperty('--my', `${e.clientY - r.top}px`);
+}));
+
+// GST clock
+(function clock() {
+  const t = new Date(Date.now() + 4 * 3600e3);
+  $('#clock').textContent = t.toISOString().slice(11, 19);
+  setTimeout(clock, 1000);
+})();
+
+/* =========================================================================
+   Reveal + counters
+   ========================================================================= */
+const revealIO = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('in');
+    runCounters(en.target);
+    fireGauges(en.target);
+    revealIO.unobserve(en.target);
+  });
+}, { threshold: .18, rootMargin: '0px 0px -6% 0px' });
+$$('[data-reveal], [data-observe]').forEach(el => revealIO.observe(el));
+
+/* =========================================================================
+   Section tracking, nav, keyboard, presentation mode
+   ========================================================================= */
+const crumb = $('#crumb'), secNum = $('#secNum'), topbar = $('#topbar'), progress = $('#progress');
+const railLinks = $$('#rail a');
+let current = -1;
+function currentSection() {
+  const mid = innerHeight * .4;
+  let idx = 0;
+  sections.forEach((s, i) => { if (s.getBoundingClientRect().top <= mid) idx = i; });
+  return idx;
+}
+function onScroll() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  progress.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+  topbar.classList.toggle('solid', scrollY > 40);
+  const i = currentSection();
+  if (i !== current) {
+    current = i;
+    scramble(crumb, sections[i].dataset.label, 420);
+    secNum.textContent = String(i + 1).padStart(2, '0');
+    railLinks.forEach((a, k) => a.classList.toggle('active', k === i));
+  }
+  updateSetup();
+}
+addEventListener('scroll', onScroll, { passive: true });
+addEventListener('resize', onScroll);
+
+function goTo(el) { el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }
+function step(dir) {
+  const i = currentSection();
+  const sec = sections[i];
+  // inside the pinned manufacturing section, arrow keys step through phases first
+  if (sec.id === 'setup' && setupPinned()) {
+    const next = phase + dir;
+    if (next >= 0 && next <= 2) return scrollToPhase(next);
+  }
+  const target = sections[clamp(i + dir, 0, sections.length - 1)];
+  if (target.id === 'setup' && setupPinned()) return scrollToPhase(dir > 0 ? 0 : 2);
+  goTo(target);
+}
+addEventListener('keydown', e => {
+  if (e.target.closest('input, textarea, select')) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if ((e.key === ' ' || e.key === 'Enter') && e.target.closest('button, a, [role="button"]')) return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown'].includes(e.key) || (e.key === ' ' && !e.shiftKey)) { e.preventDefault(); step(1); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key) || (e.key === ' ' && e.shiftKey)) { e.preventDefault(); step(-1); }
+  else if (e.key === 'Home') { e.preventDefault(); goTo(sections[0]); }
+  else if (e.key === 'End') { e.preventDefault(); goTo(sections[sections.length - 1]); }
+  else if (e.key.toLowerCase() === 'f') togglePresent();
+});
+function togglePresent() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  else document.exitFullscreen?.();
+}
+$('#presentBtn').addEventListener('click', togglePresent);
+$$('[data-present]').forEach(b => b.addEventListener('click', togglePresent));
+
+/* =========================================================================
+   Portfolio
+   ========================================================================= */
+let model = 'nj40', throttle = .35, explode = false, engine = null;
+function setModel(m, instant = false) {
+  model = m;
+  const d = MODELS[m];
+  const sw = $('#modelSwitch');
+  sw.dataset.active = m;
+  $$('button', sw).forEach(b => { const on = b.dataset.model === m; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
+  $('#pfTag').textContent = d.tag;
+  $('#pfDesc').textContent = d.desc;
+  $('#roModel').textContent = d.name;
+  $$('[data-spec-k]').forEach(el => instant ? (el.textContent = d.specs[el.dataset.specK]) : scramble(el, d.specs[el.dataset.specK]));
+  $$('[data-spec]').forEach(el => instant ? (el.textContent = d[el.dataset.spec]) : scramble(el, d[el.dataset.spec]));
+  updateThrottle();
+  engine?.setModel(m);
+}
+$$('#modelSwitch button').forEach(b => b.addEventListener('click', () => setModel(b.dataset.model)));
+const thr = $('#throttle');
+function updateThrottle() {
+  throttle = thr.value / 100;
+  thr.style.setProperty('--p', thr.value + '%');
+  $('#thrOut').innerHTML = `<b>${thr.value}%</b>`;
+  $('#roRpm').textContent = throttle < .05 ? 'IDLE' : throttle > .9 ? 'MAX' : 'SPOOLING';
+  $('#roThrust').textContent = `≈ ${Math.round(MODELS[model].thrustMax * throttle)} daN (sim.)`;
+  engine?.setThrottle(throttle);
+}
+thr.addEventListener('input', updateThrottle);
+$('#explodeBtn').addEventListener('click', e => {
+  explode = !explode;
+  e.currentTarget.setAttribute('aria-pressed', explode);
+  engine?.setExplode(explode);
+});
+setModel('nj40', true);
+
+/* =========================================================================
+   Manufacturing setup (scroll-pinned)
+   ========================================================================= */
+const track = $('#setupTrack');
+const setupPinned = () => getComputedStyle($('.setup-sticky')).position === 'sticky';
+let phase = -1;
+function setupProgress() {
+  const r = track.getBoundingClientRect();
+  return clamp(-r.top / (r.height - innerHeight), 0, 1);
+}
+function scrollToPhase(i) {
+  if (!setupPinned()) return setPhase(i);
+  const top = track.getBoundingClientRect().top + scrollY;
+  const span = track.offsetHeight - innerHeight;
+  scrollTo({ top: top + span * [0.0, 0.5, 1][i] + (i === 0 ? 2 : i === 2 ? -2 : 0), behavior: reduced ? 'auto' : 'smooth' });
+}
+function updateSetup() {
+  if (!setupPinned()) return;
+  const p = setupProgress();
+  $('#phaseRail').style.setProperty('--p', p);
+  setPhase(p < .3333 ? 0 : p < .6667 ? 1 : 2);
+}
+$$('.pr-btn').forEach(b => b.addEventListener('click', () => scrollToPhase(+b.dataset.phase)));
+function setPhase(i) {
+  if (i === phase) return;
+  const prev = phase;
+  phase = i;
+  const P = PHASES[i];
+  $$('.pr-btn').forEach((b, k) => { b.classList.toggle('active', k === i); b.setAttribute('aria-selected', k === i); });
+  if (!setupPinned()) $('#phaseRail').style.setProperty('--p', (i + 1) / 3);
+  scramble($('#ppScope'), `Phase ${P.n} · ${P.scope}`);
+  scramble($('#ppName'), P.name);
+  const from = prev >= 0 ? PHASES[prev] : PHASES[0];
+  tween(from.vol, P.vol, v => $('#ppVol').textContent = fmt(Math.round(v)));
+  tween(from.capex, P.capex, v => $('#ppCapex').textContent = `USD ${Math.round(v)} M`);
+  tween(from.staff, P.staff, v => $('#ppStaff').textContent = `${Math.round(v)} FTE`);
+  tween(from.equip, P.equip, v => $('#ppEquip').textContent = `${Math.round(v)} sets`);
+  scramble($('#ppNote'), P.note);
+  [['capex', 28], ['staff', 150], ['equip', 135]].forEach(([k, max]) => {
+    $$(`[data-bar="${k}"] i`).forEach((el, j) => {
+      el.style.setProperty('--w', (j <= i ? Math.max(PHASES[j][k] / max * 100, 4) : 0) + '%');
+      el.classList.toggle('cur', j === i);
+    });
+  });
+  $('#compBadge').textContent = P.comp;
+  $('#roSrc').textContent = P.src;
+  $('#rdMeter').style.setProperty('--r', P.red / 25);
+  $$('#rdMeter .mk').forEach((m, k) => m.classList.toggle('hit', k <= i));
+  tween(from.red, P.red, v => $('#rdBig').textContent = v.toFixed(1).replace(/\.0$/, '') + '%');
+  tween(KIT.nj40 * (1 - from.red / 100), KIT.nj40 * (1 - P.red / 100), v => $('#rdNj40').textContent = '$' + fmt(Math.round(v)));
+  tween(KIT.nj120 * (1 - from.red / 100), KIT.nj120 * (1 - P.red / 100), v => $('#rdNj120').textContent = '$' + fmt(Math.round(v)));
+  engine?.setPhase(i);
+}
+function tween(a, b, fn, dur = 900) {
+  if (reduced || a === b) return fn(b);
+  const s = performance.now();
+  const t = (n) => { const k = clamp((n - s) / dur, 0, 1); fn(lerp(a, b, easeOut(k))); if (k < 1) requestAnimationFrame(t); else fn(b); };
+  requestAnimationFrame(t);
+}
+setPhase(0);
+
+/* =========================================================================
+   Factory floor plan
+   ========================================================================= */
+(() => {
+  const plan = $('#plan'), tip = $('#ztip'), shell = $('#planShell');
+  const PH = { 0: ['Shared', '#c4ccd1'], 1: ['Phase 1', 'var(--p1)'], 2: ['Phase 2', 'var(--p2)'], 3: ['Phase 3', 'var(--p3)'] };
+  let sel = null;
+  function select(id) {
+    const z = ZONES.find(z => z.id === id);
+    if (!z) return;
+    sel = id;
+    $$('.zone', plan).forEach(r => r.classList.toggle('sel', r.dataset.id === id));
+    $('#zpPh').textContent = PH[z.ph][0];
+    $('#zpDot').style.background = PH[z.ph][1];
+    scramble($('#zpName'), z.name, 380);
+    tween(+$('#zpArea').textContent.replace(/,/g, '') || 0, z.area, v => $('#zpArea').textContent = fmt(Math.round(v)), 600);
+    const share = z.area / 8000 * 100;
+    $('#zpBar').style.width = Math.min(share * 3, 100) + '%';
+    $('#zpShare').textContent = `${share.toFixed(1)}% of ~8,000 m² facility`;
+    $('#zpDesc').textContent = z.desc || '';
+    $('#zpList').innerHTML = (z.list || []).map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('');
+  }
+  $$('.zone', plan).forEach(r => {
+    const z = ZONES.find(z => z.id === r.dataset.id);
+    r.addEventListener('pointerenter', () => { tip.querySelector('b').textContent = z.name; tip.querySelector('span').textContent = `${fmt(z.area)} m² · ${PH[z.ph][0]}`; tip.classList.add('on'); });
+    r.addEventListener('pointermove', e => { const s = shell.getBoundingClientRect(); tip.style.left = (e.clientX - s.left) + 'px'; tip.style.top = (e.clientY - s.top) + 'px'; });
+    r.addEventListener('pointerleave', () => tip.classList.remove('on'));
+    r.addEventListener('click', () => select(z.id));
+    r.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); select(z.id); } });
+  });
+  $$('#phaseFilter .chip').forEach(c => c.addEventListener('click', () => {
+    $$('#phaseFilter .chip').forEach(x => x.classList.toggle('active', x === c));
+    plan.dataset.filter = c.dataset.f;
+    plan.classList.toggle('dim', c.dataset.f !== 'all');
+    if (c.dataset.f !== 'all') {
+      const first = ZONES.filter(z => String(z.ph) === c.dataset.f).sort((a, b) => b.area - a.area)[0];
+      if (first) select(first.id);
+    }
+  }));
+  const flowLegend = $('#flowLegend');
+  flowLegend.innerHTML = '<span><em>Indicative material flow</em></span>' + STATIONS.map((s, i) => `<span><b>${i + 1}</b>${s[2]}</span>`).join('');
+  $('#flowBtn').addEventListener('click', e => {
+    const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+    e.currentTarget.setAttribute('aria-pressed', on);
+    $('#flow').classList.toggle('on', on);
+    flowLegend.classList.toggle('on', on);
+  });
+  $('#tiltBtn').addEventListener('click', e => {
+    const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+    e.currentTarget.setAttribute('aria-pressed', on);
+    plan.classList.toggle('tilt', on);
+  });
+  select('asm');
+})();
+
+/* =========================================================================
+   3D turbojet engine (Three.js, loaded on demand)
+   ========================================================================= */
+async function createEngine() {
+  const THREE = await import('three');
+  const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+  const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  const canvas = renderer.domElement;
+  canvas.setAttribute('aria-label', 'Interactive 3D turbojet engine');
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+  const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 200);
+  camera.position.set(9, 4.2, 15);
+  const controls = new OrbitControls(camera, canvas);
+  controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true; controls.dampingFactor = .06;
+  controls.autoRotate = !reduced; controls.autoRotateSpeed = .55;
+  controls.minPolarAngle = .45; controls.maxPolarAngle = 1.75;
+  if (!finePointer) { controls.enabled = false; canvas.style.touchAction = 'pan-y'; }
+  let idleTimer;
+  controls.addEventListener('start', () => { controls.autoRotate = false; clearTimeout(idleTimer); });
+  controls.addEventListener('end', () => { idleTimer = setTimeout(() => controls.autoRotate = !reduced, 4000); });
+
+  // lights
+  scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x1a0c06, .35));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(5, 8, 6); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xff5a1f, 3.2); rim.position.set(-8, 2, -6); scene.add(rim);
+  const fill = new THREE.DirectionalLight(0x8fb4ff, .6); fill.position.set(-4, -3, 8); scene.add(fill);
+
+  // ground: holographic polar grid + soft shadow
+  const ground = new THREE.Group(); scene.add(ground);
+  const polar = new THREE.PolarGridHelper(7.5, 24, 6, 96, 0xfe400d, 0x3a4a55);
+  polar.material.transparent = true; polar.material.opacity = .28; polar.material.depthWrite = false;
+  ground.add(polar);
+  const ringGeo = new THREE.RingGeometry(7.45, 7.6, 128);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0xfe400d, transparent: true, opacity: .55, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
+  const ring = new THREE.Mesh(ringGeo, ringMat); ring.rotation.x = -Math.PI / 2; ground.add(ring);
+  const shadowTex = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+    const gr = g.createRadialGradient(128, 128, 0, 128, 128, 128); gr.addColorStop(0, 'rgba(0,0,0,.75)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c);
+  })();
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = .01; ground.add(shadow);
+
+  const glowTex = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+    const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.25, 'rgba(255,190,120,.8)'); gr.addColorStop(.6, 'rgba(255,80,20,.25)'); gr.addColorStop(1, 'rgba(255,60,0,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c);
+  })();
+
+  // materials
+  const MAT = {
+    steel: () => new THREE.MeshPhysicalMaterial({ color: 0xc9ced3, metalness: 1, roughness: .2, clearcoat: .4, clearcoatRoughness: .25 }),
+    brushed: () => new THREE.MeshStandardMaterial({ color: 0xaab1b7, metalness: 1, roughness: .36 }),
+    bronze: () => new THREE.MeshStandardMaterial({ color: 0xc28d5c, metalness: 1, roughness: .28 }),
+    dark: () => new THREE.MeshStandardMaterial({ color: 0x17191c, metalness: .75, roughness: .38 }),
+    heat: () => new THREE.MeshStandardMaterial({ color: 0x8c8178, metalness: 1, roughness: .32 }),
+    chrome: () => new THREE.MeshStandardMaterial({ color: 0xf1f3f5, metalness: 1, roughness: .07 }),
+    titanium: () => new THREE.MeshStandardMaterial({ color: 0xb9bec4, metalness: 1, roughness: .18, side: THREE.DoubleSide }),
+    cavity: () => new THREE.MeshStandardMaterial({ color: 0x0a0c0e, metalness: .4, roughness: .7, side: THREE.BackSide })
+  };
+
+  function buildEngine(kind) {
+    const big = kind === 'nj120';
+    const L = big ? 7.32 : 4.6, R = big ? 1.14 : .885;
+    const Y = t => L / 2 - t * L;
+    const root = new THREE.Group();          // world-facing (engine axis along +X)
+    const body = new THREE.Group();          // engine axis along local +Y
+    body.rotation.z = -Math.PI / 2;
+    root.add(body);
+    const parts = {};
+    const mkPart = (id, label, explodeAxial, explodeLift = 0, anchorT = .5) => {
+      const g = new THREE.Group(); body.add(g);
+      parts[id] = { id, label, group: g, mats: [], ex: explodeAxial * L, lift: explodeLift, anchor: new THREE.Vector3(-R * 1.35, Y(anchorT), 0), glow: 0, local: false };
+      return parts[id];
+    };
+    const add = (part, mesh) => { part.group.add(mesh); if (mesh.material && !part.mats.includes(mesh.material)) part.mats.push(mesh.material); return mesh; };
+    const lathe = (pts, mat, seg = 96) => new THREE.Mesh(new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), seg), mat);
+
+    // spinner / inlet cone
+    const pSpin = mkPart('spinner', 'Inlet cone', .42, 0, .08);
+    add(pSpin, lathe([[0, Y(0)], [R * .08, Y(.012)], [R * .19, Y(.045)], [R * .28, Y(.09)], [R * .32, Y(.13)], [R * .32, Y(.17)], [0, Y(.17)]], MAT.chrome()));
+
+    // intake lip / front flange
+    const pIn = mkPart('intake', 'Intake & front frame', .28, 0, .12);
+    add(pIn, lathe([[R * .84, Y(.17)], [R * .84, Y(.105)], [R * .9, Y(.085)], [R * .99, Y(.088)], [R * 1.03, Y(.105)], [R * 1.03, Y(.165)], [R * .84, Y(.17)]], big ? MAT.dark() : MAT.steel()));
+    // stator struts across the intake
+    const strutMat = big ? MAT.dark() : MAT.brushed();
+    for (let i = 0; i < 4; i++) {
+      const s = new THREE.Mesh(new THREE.BoxGeometry(R * 1.7, L * .012, R * .04), strutMat);
+      s.position.y = Y(.1); s.rotation.y = i * Math.PI / 4 + Math.PI / 8; add(pIn, s);
+    }
+    if (big) {
+      // NJ120 front accessory housing (black components ring)
+      const acc = MAT.dark();
+      add(pIn, lathe([[R * 1.0, Y(.11)], [R * 1.13, Y(.125)], [R * 1.13, Y(.25)], [R * 1.0, Y(.27)]], acc));
+      for (let i = 0; i < 12; i++) {
+        const a = i / 12 * Math.PI * 2;
+        const bx = new THREE.Mesh(new THREE.BoxGeometry(R * .22, L * (.06 + (i % 3) * .02), R * .3), acc);
+        bx.position.set(Math.cos(a) * R * 1.2, Y(.19), Math.sin(a) * R * 1.2); bx.rotation.y = -a; add(pIn, bx);
+      }
+    }
+
+    // compressor (rotor)
+    const pComp = mkPart('compressor', 'Compressor', .17, 0, .19);
+    const compRotor = new THREE.Group(); pComp.group.add(compRotor);
+    const hubMat = MAT.brushed(); pComp.mats.push(hubMat);
+    compRotor.add(lathe([[0, Y(.13)], [R * .3, Y(.13)], [R * .44, Y(.2)], [R * .44, Y(.245)], [0, Y(.245)]], hubMat, 64));
+    const bladeMat = MAT.titanium(); pComp.mats.push(bladeMat);
+    const nb = big ? 22 : 17;
+    for (let i = 0; i < nb; i++) {
+      const piv = new THREE.Group(); piv.rotation.y = i / nb * Math.PI * 2; piv.position.y = Y(.19);
+      const bl = new THREE.Mesh(new THREE.BoxGeometry(R * .42, L * .07, R * .02), bladeMat);
+      bl.position.x = R * .62; bl.rotation.x = .62; piv.add(bl); compRotor.add(piv);
+    }
+
+    // main casing (cold section)
+    const pCase = mkPart('casing', 'Engine casing', 0, 0, .36);
+    const caseMat = big ? MAT.brushed() : MAT.steel();
+    add(pCase, lathe([[R * 1.0, Y(.165)], [R * 1.0, Y(.2)], [R * 1.018, Y(.205)], [R * 1.018, Y(.222)], [R * 1.0, Y(.227)], [R * 1.0, Y(.5)], [R * 1.022, Y(.505)], [R * 1.022, Y(.53)], [R * .98, Y(.56)], [R * .9, Y(.56)], [R * .9, Y(.165)], [R * 1.0, Y(.165)]], caseMat, 128));
+    const cav = new THREE.Mesh(new THREE.CylinderGeometry(R * .9, R * .9, L * .39, 64, 1, true), MAT.cavity());
+    cav.position.y = Y(.36); pCase.group.add(cav);
+    // bolt rings
+    const boltMat = MAT.chrome();
+    const boltRing = (part, t, r, n, mat) => {
+      const im = new THREE.InstancedMesh(new THREE.CylinderGeometry(R * .022, R * .022, R * .05, 8), mat, n);
+      const d = new THREE.Object3D();
+      for (let i = 0; i < n; i++) {
+        const a = i / n * Math.PI * 2;
+        d.position.set(Math.cos(a) * r, Y(t), Math.sin(a) * r); d.rotation.set(0, -a, Math.PI / 2); d.updateMatrix(); im.setMatrixAt(i, d.matrix);
+      }
+      part.group.add(im);
+    };
+    boltRing(pCase, .213, R * 1.02, 28, boltMat);
+    boltRing(pCase, .518, R * 1.024, 28, boltMat);
+    // fuel line + igniter lead along casing
+    const lineMat = big ? MAT.dark() : MAT.bronze(); pCase.mats.push(lineMat);
+    const fuelCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(R * .2, Y(.24), -R * 1.08), new THREE.Vector3(R * .55, Y(.33), -R * .98), new THREE.Vector3(R * .75, Y(.45), -R * .8), new THREE.Vector3(R * .72, Y(.56), -R * .82)
+    ]);
+    pCase.group.add(new THREE.Mesh(new THREE.TubeGeometry(fuelCurve, 48, R * .03, 10), lineMat));
+    const ecu = new THREE.Mesh(new THREE.BoxGeometry(R * .26, L * .1, R * .42), MAT.dark());
+    ecu.position.set(-R * 1.08, Y(.38), 0); pCase.group.add(ecu);
+    // mounting feet (local +X = world down)
+    const footMat = MAT.brushed();
+    [.3, .47].forEach(t => {
+      const f = new THREE.Mesh(new THREE.BoxGeometry(R * .5, L * .025, R * .55), footMat);
+      f.position.set(R * 1.1, Y(t), 0); pCase.group.add(f);
+      const pad = new THREE.Mesh(new THREE.BoxGeometry(R * .06, L * .05, R * .8), footMat);
+      pad.position.set(R * 1.36, Y(t), 0); pCase.group.add(pad);
+    });
+    pCase.mats.push(caseMat, footMat);
+
+    // main shaft
+    const pShaft = mkPart('shaft', 'Main shaft', 0, -R * 2.6, .5);
+    pShaft.anchor.set(-R * .3, Y(.5), 0);
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(R * .075, R * .075, L * .62, 24), MAT.chrome());
+    shaft.position.y = Y(.48); add(pShaft, shaft);
+    [.26, .7].forEach(t => { const b = new THREE.Mesh(new THREE.CylinderGeometry(R * .14, R * .14, L * .025, 24), MAT.bronze()); b.position.y = Y(t); add(pShaft, b); });
+
+    // combustor
+    const pComb = mkPart('combustor', 'Combustion chamber', -.1, 0, .65);
+    const combMat = big ? MAT.brushed() : MAT.bronze();
+    add(pComb, lathe([[R * .96, Y(.56)], [R * .96, Y(.6)], [R * .985, Y(.605)], [R * .985, Y(.63)], [R * .95, Y(.635)], [R * .95, Y(.68)], [R * .975, Y(.685)], [R * .975, Y(.71)], [R * .92, Y(.74)], [R * .8, Y(.74)], [R * .8, Y(.56)], [R * .96, Y(.56)]], combMat, 128));
+    boltRing(pComb, .618, R * .99, 24, boltMat);
+    boltRing(pComb, .697, R * .985, 24, boltMat);
+
+    // turbine (rotor + shroud)
+    const pTurb = mkPart('turbine', 'Turbine', -.22, 0, .77);
+    const turbRotor = new THREE.Group(); pTurb.group.add(turbRotor);
+    const discMat = MAT.bronze(); pTurb.mats.push(discMat);
+    turbRotor.add(lathe([[0, Y(.755)], [R * .36, Y(.755)], [R * .36, Y(.79)], [0, Y(.79)]], discMat, 64));
+    const tbMat = MAT.titanium(); pTurb.mats.push(tbMat);
+    const nt = big ? 34 : 28;
+    for (let i = 0; i < nt; i++) {
+      const piv = new THREE.Group(); piv.rotation.y = i / nt * Math.PI * 2; piv.position.y = Y(.772);
+      const bl = new THREE.Mesh(new THREE.BoxGeometry(R * .38, L * .028, R * .018), tbMat);
+      bl.position.x = R * .54; bl.rotation.x = -.7; piv.add(bl); turbRotor.add(piv);
+    }
+    add(pTurb, lathe([[R * .84, Y(.745)], [R * .88, Y(.745)], [R * .88, Y(.8)], [R * .84, Y(.8)], [R * .84, Y(.745)]], MAT.heat(), 96));
+
+    // exhaust nozzle
+    const pNoz = mkPart('nozzle', 'Exhaust nozzle', -.36, 0, .9);
+    const nozMat = big ? MAT.dark() : MAT.heat();
+    add(pNoz, lathe([[R * .86, Y(.8)], [R * .86, Y(.84)], [R * .82, Y(.86)], [R * .7, Y(.97)], [R * .66, Y(1)], [R * .6, Y(1)], [R * .64, Y(.96)], [R * .76, Y(.86)], [R * .78, Y(.8)], [R * .86, Y(.8)]], nozMat, 96));
+    if (big) for (let k = 0; k < 4; k++) { const rib = lathe([[R * .83 - k * R * .035, Y(.87 + k * .028)], [R * .86 - k * R * .035, Y(.875 + k * .028)], [R * .83 - k * R * .035, Y(.88 + k * .028)]], MAT.steel(), 64); add(pNoz, rib); }
+    add(pNoz, lathe([[R * .42, Y(.82)], [R * .36, Y(.9)], [R * .18, Y(.97)], [0, Y(.985)]], MAT.dark(), 48));
+    const glowMat = new THREE.MeshBasicMaterial({ color: 0xff6a1f, transparent: true, opacity: .4, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    const glowDisc = new THREE.Mesh(new THREE.RingGeometry(R * .2, R * .62, 64), glowMat);
+    glowDisc.rotation.x = Math.PI / 2; glowDisc.position.y = Y(.975); pNoz.group.add(glowDisc);
+    const nozLight = new THREE.PointLight(0xff5a1f, 0, L * 1.2, 2); nozLight.position.y = Y(1.05); pNoz.group.add(nozLight);
+
+    // exhaust plume (custom shader points)
+    const NP = 420;
+    const pos = new Float32Array(NP * 3), life = new Float32Array(NP), seed = new Float32Array(NP);
+    for (let i = 0; i < NP; i++) { life[i] = Math.random(); seed[i] = Math.random(); }
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    pg.setAttribute('aLife', new THREE.BufferAttribute(life, 1));
+    const pm = new THREE.ShaderMaterial({
+      uniforms: { uMap: { value: glowTex }, uI: { value: .3 }, uScale: { value: R * 300 * renderer.getPixelRatio() } },
+      vertexShader: `attribute float aLife; varying float vL; uniform float uScale;
+        void main(){ vL=aLife; vec4 mv=modelViewMatrix*vec4(position,1.); gl_PointSize=uScale*(.35+aLife*1.5)/-mv.z; gl_Position=projectionMatrix*mv; }`,
+      fragmentShader: `uniform sampler2D uMap; uniform float uI; varying float vL;
+        void main(){ vec4 t=texture2D(uMap,gl_PointCoord); vec3 c=mix(vec3(1.,.85,.6),vec3(1.,.28,.04),smoothstep(0.,.5,vL)); c=mix(c,vec3(.35,.08,.02),smoothstep(.5,1.,vL));
+          gl_FragColor=vec4(c, t.a*(1.-vL)*uI); }`,
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+    });
+    const plume = new THREE.Points(pg, pm); plume.frustumCulled = false; pNoz.group.add(plume);
+
+    // scan ring
+    const scan = new THREE.Mesh(new THREE.TorusGeometry(R * 1.25, R * .012, 8, 128), new THREE.MeshBasicMaterial({ color: 0xff7a3d, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+    scan.rotation.x = Math.PI / 2; body.add(scan);
+
+    Object.values(parts).forEach(p => p.mats.forEach(m => { if (m.emissive) m.emissive.setHex(0xff4a10); m.emissiveIntensity = 0; }));
+    root.position.y = R * 1.42;
+    return { root, body, parts, L, R, Y, compRotor, turbRotor, glowMat, nozLight, plume, NP, pos, life, seed, scan, scanT: 1 };
+  }
+
+  const engines = { nj40: buildEngine('nj40'), nj120: buildEngine('nj120') };
+  Object.values(engines).forEach(e => { e.root.scale.setScalar(.0001); e.root.visible = false; scene.add(e.root); });
+
+  // state
+  const state = { model: 'nj40', throttle: .35, explode: 0, explodeT: 0, phase: 0, mode: 'portfolio', stage: null, visible: false, swap: 1 };
+  let cur = engines.nj40, prev = null;
+  cur.root.visible = true;
+
+  const PHASE_LOCAL = [[], ['compressor', 'shaft', 'combustor', 'turbine'], ['spinner', 'intake', 'compressor', 'casing', 'shaft', 'combustor', 'turbine', 'nozzle']];
+  const labelEls = {};
+  const labelIds = ['spinner', 'intake', 'compressor', 'casing', 'shaft', 'combustor', 'turbine', 'nozzle'];
+  // staggered leader-line heights so neighbouring labels never collide
+  const LINE_H = { spinner: 24, intake: 64, compressor: 104, casing: 24, shaft: 138, combustor: 64, turbine: 104, nozzle: 24 };
+  labelIds.forEach(id => {
+    const el = document.createElement('div');
+    el.className = 'tag3d';
+    el.innerHTML = `<div class="t"><i></i><span></span></div><div class="l" style="height:${LINE_H[id]}px"></div>`;
+    labelEls[id] = el;
+  });
+
+  function attach(stage, mode) {
+    if (state.stage === stage) return;
+    state.stage = stage; state.mode = mode;
+    stage.insertBefore(canvas, stage.firstChild);
+    const lab = stage.querySelector('.stage-labels');
+    labelIds.forEach(id => lab.appendChild(labelEls[id]));
+    resize();
+    state.explodeT = mode === 'setup' ? 1 : (explode ? 1 : 0);
+    controls.enabled = finePointer && mode !== 'setup';
+    controls.autoRotate = !reduced && mode !== 'setup';
+  }
+  function resize() {
+    if (!state.stage) return;
+    const r = state.stage.getBoundingClientRect();
+    renderer.setSize(Math.max(r.width, 1), Math.max(r.height, 1), false);
+    camera.aspect = r.width / Math.max(r.height, 1);
+    camera.updateProjectionMatrix();
+  }
+  addEventListener('resize', resize);
+  new ResizeObserver(resize).observe($('#stagePortfolio'));
+  new ResizeObserver(resize).observe($('#stageSetup'));
+
+  // pick the stage that is most visible
+  const vis = new Map();
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => vis.set(e.target, e.intersectionRatio));
+    let best = null, bestR = 0;
+    vis.forEach((r, el) => { if (r > bestR) { bestR = r; best = el; } });
+    state.visible = bestR > 0;
+    if (best) attach(best, best.id === 'stageSetup' ? 'setup' : 'portfolio');
+  }, { threshold: [0, .05, .2, .4, .6, .8, 1] });
+  io.observe($('#stagePortfolio')); io.observe($('#stageSetup'));
+
+  function setModel(m) {
+    if (engines[m] === cur) return;
+    prev = cur; cur = engines[m]; cur.root.visible = true; state.swap = 0; cur.scanT = 0;
+  }
+  function triggerScan() { cur.scanT = 0; }
+
+  const clock = new THREE.Clock();
+  const tmp = new THREE.Vector3(), setupDir = new THREE.Vector3();
+  let dist = 16;
+  function frame() {
+    requestAnimationFrame(frame);
+    if (!state.visible || !state.stage) return;
+    const dt = Math.min(clock.getDelta(), .05);
+    const t = clock.elapsedTime;
+
+    // model swap
+    if (state.swap < 1) {
+      state.swap = Math.min(1, state.swap + dt * 1.6);
+      const k = state.swap;
+      const back = 1 + 2.2 * Math.pow(k - 1, 3) + 1.2 * Math.pow(k - 1, 2);
+      cur.root.scale.setScalar(Math.max(.0001, back));
+      if (prev) { prev.root.scale.setScalar(Math.max(.0001, 1 - easeOut(Math.min(1, k * 1.6)))); if (k >= 1) { prev.root.visible = false; prev = null; } }
+    } else cur.root.scale.setScalar(1);
+
+    const targetEx = state.mode === 'setup' ? 1 : state.explode;
+    state.explodeT = lerp(state.explodeT, targetEx, 1 - Math.exp(-dt * 3.2));
+    const ex = state.explodeT;
+    const th = state.mode === 'setup' ? .18 : state.throttle;
+
+    [cur, prev].forEach(E => {
+      if (!E) return;
+      // explode
+      Object.values(E.parts).forEach(p => {
+        p.group.position.y = p.ex * ex;
+        p.group.position.x = p.lift * ex;
+      });
+      // rotors
+      const w = (1.2 + th * 22) * dt;
+      E.compRotor.rotation.y += w; E.turbRotor.rotation.y += w * 1.1;
+      // exhaust glow
+      E.glowMat.opacity = .12 + th * .85 + Math.sin(t * 30) * .03 * th;
+      E.nozLight.intensity = th * 18;
+      E.plume.material.uniforms.uI.value = .1 + th * 1.15;
+      const speed = (1.6 + th * 7) * E.L * .12;
+      for (let i = 0; i < E.NP; i++) {
+        E.life[i] += dt * (.7 + th * 1.6) * (.6 + E.seed[i] * .8);
+        if (E.life[i] > 1) { E.life[i] = 0; E.seed[i] = Math.random(); }
+        const l = E.life[i], a = E.seed[i] * 6.283, rr = E.R * .45 * Math.sqrt(E.seed[(i * 7) % E.NP]) * (1 + l * 1.4 * (.4 + th));
+        E.pos[i * 3] = Math.cos(a) * rr;
+        E.pos[i * 3 + 1] = E.Y(.99) - l * speed * (.5 + E.seed[i] * .5);
+        E.pos[i * 3 + 2] = Math.sin(a) * rr;
+      }
+      E.plume.geometry.attributes.position.needsUpdate = true;
+      E.plume.geometry.attributes.aLife.needsUpdate = true;
+      // scan ring
+      if (E.scanT < 1) {
+        E.scanT = Math.min(1, E.scanT + dt * .7);
+        E.scan.position.y = lerp(E.L * .55, -E.L * .55, easeOut(E.scanT)) * (1 + ex * .6);
+        E.scan.material.opacity = Math.sin(E.scanT * Math.PI) * .9;
+      }
+      // phase highlight
+      const localSet = state.mode === 'setup' ? PHASE_LOCAL[state.phase] : [];
+      Object.values(E.parts).forEach(p => {
+        p.local = localSet.includes(p.id);
+        p.glow = lerp(p.glow, p.local ? 1 : 0, 1 - Math.exp(-dt * 4));
+        const pulse = .55 + .25 * Math.sin(t * 2.4);
+        p.mats.forEach(m => { m.emissiveIntensity = p.glow * pulse * .95; });
+      });
+    });
+
+    // ground scale & shadow
+    ground.scale.setScalar((cur.L / 7.32) * (1 + ex * .55) * .9 + .1);
+    shadow.scale.set(cur.L * 1.25 * (1 + ex * .8) / ground.scale.x, cur.R * 3 / ground.scale.x, 1);
+    ring.material.opacity = .35 + Math.sin(t * 1.5) * .15;
+    polar.rotation.y += dt * .05;
+
+    // camera fit
+    const fitL = state.mode === 'portfolio' ? 7.32 : cur.L;
+    const fitW = fitL * (1.25 + ex * .78);
+    const tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    const want = Math.max(fitW / (2 * tanH * camera.aspect), (cur.R * (4.2 + ex * 2.4)) / (2 * tanH));
+    dist = lerp(dist, want, 1 - Math.exp(-dt * 3));
+    controls.target.set(0, cur.R * 1.42 + ex * cur.R * .9, 0);
+    if (state.mode === 'setup') {
+      // locked three-quarter side view with a slow cinematic sway
+      const az = .42 + Math.sin(t * .22) * .16;
+      setupDir.set(Math.sin(az), .3, Math.cos(az)).normalize();
+      tmp.copy(camera.position).sub(controls.target).normalize().lerp(setupDir, 1 - Math.exp(-dt * 2.2)).setLength(dist);
+    } else tmp.copy(camera.position).sub(controls.target).setLength(dist);
+    camera.position.copy(controls.target).add(tmp);
+    controls.update();
+
+    // labels
+    const showLabels = ex > .55;
+    const rect = canvas.getBoundingClientRect();
+    labelIds.forEach(id => {
+      const p = cur.parts[id], el = labelEls[id];
+      if (!p) return;
+      el.classList.toggle('on', showLabels && cur.root.scale.x > .8);
+      el.classList.toggle('local', p.local);
+      el.querySelector('span').textContent = p.label;
+      tmp.copy(p.anchor); p.group.localToWorld(tmp); tmp.project(camera);
+      el.style.transform = `translate(${(tmp.x * .5 + .5) * rect.width}px, ${(-tmp.y * .5 + .5) * rect.height}px) translate(-50%, -100%)`;
+    });
+
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(frame);
+
+  return {
+    setModel: m => setModel(m),
+    setThrottle: v => { state.throttle = v; },
+    setExplode: v => { state.explode = v ? 1 : 0; },
+    setPhase: i => { if (state.phase !== i) { state.phase = i; triggerScan(); } }
+  };
+}
+
+createEngine().then(api => {
+  engine = api;
+  api.setModel(model); api.setThrottle(throttle); api.setExplode(explode); api.setPhase(Math.max(phase, 0));
+  engineReady = true;
+}).catch(err => {
+  console.warn('3D engine unavailable:', err);
+  engineReady = true;
+  // graceful fallback: show the deck renders in place of the live model
+  [['#stagePortfolio', 'assets/nj40-scene.jpg'], ['#stageSetup', 'assets/nj40-render.jpg']].forEach(([s, src]) => {
+    const img = document.createElement('img'); img.src = src; img.alt = '';
+    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;';
+    $(s).prepend(img);
+  });
+  $('#dragHint').textContent = 'Preview';
+});
+
+onScroll();
+</script>
+</body>
+</html>
